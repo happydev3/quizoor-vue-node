@@ -1,0 +1,60 @@
+<template>
+  <vs-card>
+    <div slot="header">
+      <h3>
+        Level Edit Form
+      </h3>
+    </div>
+    <vx-input-group class="mb-base">
+      <vs-input v-model="name" />
+
+      <template slot="append">
+        <div class="append-text btn-addon">
+          <vs-button color="success" type="border" @click="updateLevel">Update</vs-button>
+          <vs-button color="warning" type="border" @click="back">Cancel</vs-button>
+        </div>
+      </template>
+    </vx-input-group>
+  </vs-card>
+</template>
+
+<script>
+import AdminService from '@/services/admin.service.js'
+export default {
+  data() {
+    return {
+      name: '',
+    }
+  },
+  created() {
+    const id = this.$router.currentRoute.params.id;
+    return AdminService.getLevelById(id).then(
+      res => {
+        this.name = res.data.name;
+        console.log(res);
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  },
+  methods: {
+    updateLevel() {
+      let rdata = {
+        id: this.$router.currentRoute.params.id,
+        name: this.name
+      }
+      return AdminService.updateLevelById(rdata).then(
+        res => {
+          this.$vs.notify({ title:'Updated Successfully', color:'success', position:'top-right' });
+          setTimeout(function(){ this.$router.push('/admin/level') }, 500);
+          console.log(res);
+        }
+      )
+    },
+    back() {
+      this.$router.push('/admin/level');
+    }
+  }
+}
+</script>

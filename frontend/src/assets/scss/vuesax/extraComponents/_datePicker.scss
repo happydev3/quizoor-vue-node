@@ -1,0 +1,45 @@
+/*=========================================================================================
+    File Name: _datePicker.scss
+    Description: Styles for datepicker component.
+    ----------------------------------------------------------------------------------------
+    Item Name: Vuesax Admin - VueJS Dashboard Admin Template
+      Author: Pixinvent
+    Author URL: http://www.themeforest.net/user/pixinvent
+==========================================================================================*/
+
+
+@import "../_variables.scss";
+
+.vdp-datepicker{
+    input{
+        padding: .7rem;
+        font-size: 1rem;
+        border-radius: 5px;
+        border: 1px solid rgba(0, 0, 0, .2);
+        color: $content-color;
+        width: 100%;
+    }
+
+    input[disabled] {
+      opacity: .5;
+    }
+
+    .day.blank {
+      background: transparent;
+    }
+
+    .cell {
+      &:hover {
+        border-color: rgba(var(--vs-primary),1) !important;
+      }
+
+      &.day.selected {
+        color: $white;
+        background: rgba(var(--vs-primary),1);
+
+        &:hover {
+          background: rgba(var(--vs-primary),1);
+        }
+      }
+    }
+}
