@@ -3,7 +3,8 @@ const User = require('../../model/User');
 const chalk = require('chalk');
 
 exports.getLevel = (req, res) => {
-    // const userID = req.params.userID;
+    const id = req.params.id;
+    console.log('asdfasdfasdfasdfasdfadsfasdfad',id)
     Level.find({}).then((level) => {
         if(level) {
             console.log(chalk.cyan(level))

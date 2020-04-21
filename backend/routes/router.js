@@ -10,7 +10,7 @@ router.post("/login", userController.loginUser);
 router.get("/me", auth, userController.getUserDetails);
 
 
-router.get('/getLevel/', auth, adminLevelController.getLevel);
+router.get('/getLevel/:id', auth, adminLevelController.getLevel);
 router.post('/addLevel', auth, adminLevelController.addLevel);
 router.post('/removeLevel', auth, adminLevelController.removeLevel);
 router.post('/changeStatusLevel', auth, adminLevelController.changeStatusLevel);

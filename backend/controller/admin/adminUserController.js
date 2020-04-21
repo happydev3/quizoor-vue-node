@@ -103,18 +103,30 @@ exports.updateUser = (req, res) => {
     let status = req.body.status;
     let location = req.body.location;
     console.log(chalk.greenBright(userID, firstname, lastname ,email, role, password, status, location));
-    User.findOne({email: email}).then(
+    console.log("_ location _",location);
+    User.findById(userID).then(
         (user) => {
-            if(user) { 
-                if (user._id == userID) {
-                    console.log('res__________________',user)
+            // if(user) { 
+                // if (user._id === userID) {
+                    // console.log('_____ res User _____________',user);
+                    // user.firstname = firstname;
+                    // user.lastname = lastname;
+                    // user.email = email;
+                    // user.role = role;
+                    // user.password = password;
+                    // user.status = status;
+                    // user.location = location;
+                    // user.save().then(user => {
+                    //     console.log("++++ Mother ++++", user);
+                    //     res.status(201).json({updatedUser: user});
+                    // });
+                //     console.log('_____ res User _id _____________',user._id)
                     User.findOneAndUpdate({ _id: userID }, { firstname: firstname, lastname: lastname, email: email, password: password, role: role, status: status, locations: location})
                     .then(
-                        res => {
-                            return res.status(200).json({message: 'Status changed successfully'});
-                        },
-                        error => {
-                            return res.status(400).json({error: error});
+                        user => {
+                            if(user) {
+                                return res.status(200).json({message: 'Status changed successfully'});
+                            }
                         }
                     )
                     .catch(
@@ -122,27 +134,27 @@ exports.updateUser = (req, res) => {
                             return res.status(400).json({message: error});
                         }
                     )
-                } else {
-                    console.log(user);
-                    return res.status(200).json({message: 'This Email has been existed'});
-                }
-            } else {
-                User.findOneAndUpdate({ _id: userID }, { firstname: firstname, lastname: lastname, email: email, password: password, role: role, status: status, locations: location})
-                .then(
-                    res => {
-                        console.log(chalk.greenBright(res));
-                        return res.status(200).json({message: 'Status changed successfully'});
-                    },
-                    error => {
-                        return res.status(400).json({error: error});
-                    }
-                )
-                .catch(
-                    error => {
-                        return res.status(400).json({error: error});
-                    }
-                )
-            }
+                // } else {
+                //     console.log(user);
+                //     return res.status(200).json({message: 'This Email has already existed'});
+                // }
+            // } else {
+            //     User.findOneAndUpdate({ _id: userID }, { firstname: firstname, lastname: lastname, email: email, password: password, role: role, status: status, locations: location})
+            //     .then(
+            //         res => {
+            //             console.log(chalk.greenBright(res));
+            //             return res.status(200).json({message: 'Status changed successfully'});
+            //         },
+            //         error => {
+            //             return res.status(400).json({error: error});
+            //         }
+            //     )
+            //     .catch(
+            //         error => {
+            //             return res.status(400).json({error: error});
+            //         }
+            //     )
+            // }
         }
     ).catch(
         (error) => {

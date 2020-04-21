@@ -1,12 +1,3 @@
-/*=========================================================================================
-  File Name: globalComponents.js
-  Description: Here you can register components globally
-  ----------------------------------------------------------------------------------------
-  Item Name: Vuesax Admin - VueJS Dashboard Admin Template
-  Author: Pixinvent
-  Author URL: http://www.themeforest.net/user/pixinvent
-==========================================================================================*/
-
 
 import Vue from 'vue'
 import VxTooltip from './layouts/components/vx-tooltip/VxTooltip.vue'

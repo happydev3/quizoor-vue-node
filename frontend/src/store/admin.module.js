@@ -73,7 +73,10 @@ const actions = {
     }
   },
   [GETLEVEL](context) {
-    return AdminService.getLevel().then(
+    let rdata = {
+      userID: state.user.user._id
+    }
+    return AdminService.getLevel(rdata).then(
       res => {
         context.commit(GETLEVELSUCCESS, res.data)
         return res;

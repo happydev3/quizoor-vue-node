@@ -11,32 +11,18 @@
       </div>
       <div class="vx-row">
         <div class="vx-col sm:w-1/2 w-full mb-2">
-          <vs-input class="w-full" label-placeholder="First Name" v-model="input25" />
+          <vs-input class="w-full" label-placeholder="Name" v-model="name" />
         </div>
         <div class="vx-col sm:w-1/2 w-full mb-2">
-          <vs-input class="w-full" label-placeholder="Last Name" v-model="input26" />
+          <vs-select v-validate="'required'" v-model="level" name="level" multiple vs-autocomplete label="Level" class="w-full">
+            <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="(item,index) in levels" />
+          </vs-select>
         </div>
       </div>
-      <div class="vx-row">
-        <div class="vx-col sm:w-1/2 w-full mb-2">
-          <vs-input class="w-full" label-placeholder="City" v-model="input27" />
-        </div>
-        <div class="vx-col sm:w-1/2 w-full mb-2">
-          <vs-input class="w-full" label-placeholder="Country" v-model="input28" />
-        </div>
-      </div>
-      <div class="vx-row">
-        <div class="vx-col sm:w-1/2 w-full mb-2">
-          <vs-input class="w-full" label-placeholder="Company" v-model="input29" />
-        </div>
-        <div class="vx-col sm:w-1/2 w-full mb-6">
-          <vs-input type="email" class="w-full" label-placeholder="Email" v-model="input30" />
-        </div>
-      </div>
-      <div class="vx-row">
+      <div class="vx-row" :style="{marginTop: '10px'}">
         <div class="vx-col w-full">
-          <vs-button class="mr-3 mb-2">Submit</vs-button>
-          <vs-button color="warning" type="border" class="mb-2" @click="input25 = input26 = input27 = input28 = input29 = input30 = ''; check7 = false;">Reset</vs-button>
+          <vs-button class="mr-3 mb-2">Add Data</vs-button>
+          <vs-button color="warning" type="border" class="mb-2" @click="input25 = input26 = '';">Reset</vs-button>
         </div>
       </div>
     </vs-card>
@@ -47,7 +33,7 @@
 
         <div class="flex flex-wrap-reverse items-center">
           <vs-button color="danger" type="border" :style="{marginRight: '10px'}" @click="multipleLevelDelete"><feather-icon icon="TrashIcon" svgClasses="h-4 w-4" /> {{$t('delete')}}</vs-button>
-          <vs-button color="success" type="border" @click="newData"><feather-icon icon="PlusIcon" svgClasses="h-4 w-4" /> {{$t('new')}}</vs-button>
+          <!-- <vs-button color="success" type="border" @click="newData"><feather-icon icon="PlusIcon" svgClasses="h-4 w-4" /> {{$t('new')}}</vs-button> -->
         </div>
 
         <!-- ITEMS PER PAGE -->
@@ -79,7 +65,7 @@
         <vs-th sort-key="location">{{$t('language')}}</vs-th>
       </template>
 
-      <template slot-scope="{data}">
+      <!-- <template slot-scope="{data}">
         <tbody>
           <vs-tr :data="tr" :key="indextr" v-for="(tr, indextr) in data">
             <vs-td>
@@ -96,7 +82,7 @@
             </vs-td>
           </vs-tr>
         </tbody>
-      </template>
+      </template> -->
     </vs-table>
     </vs-card>
   </div>
@@ -105,8 +91,9 @@
 <script>
 // import LevelForm from './LevelForm.vue';
 import ActionButtonGroup from '../components/ActionButtonGroup.vue'
-import { GETLEVEL } from '@/store/actionType';
 import AdminService from '@/services/admin.service.js'
+import { GETLEVEL } from '@/store/actionType';
+import { mapState } from 'vuex';
 export default {
   components: {
     ActionButtonGroup
@@ -118,6 +105,9 @@ export default {
       itemsPerPage: 10,
       isMounted: false,
       addNewDataSidebar: false,
+      name: '',
+      level: '',
+      locations: []
     }
   },
   computed: {

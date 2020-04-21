@@ -17,7 +17,7 @@
   </div>
   <div class="vx-row">
     <div class="vx-col sm:w-1/2 w-full mb-2">
-      <vs-input class="w-full" label-placeholder="Email" v-validate="'required|email'" name="email" v-model="email" />
+      <vs-input class="w-full" label-placeholder="Email" v-validate="'required|email'" name="email" v-model="email" disabled/>
       <span class="text-danger text-sm"  v-show="errors.has('email')">{{ errors.first('email') }}</span>
     </div>
     <div class="vx-col sm:w-1/2 w-full mb-2">
@@ -121,9 +121,7 @@ export default {
             res => {
               if(res.data.message == 'Status changed successfully') {
                   this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
-                  setTimeout(function(){ this.$router.push('/admin/users') }, 500);
-              } else if(res.data.message == 'This Email has been existed') {
-                this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
+                  setTimeout(() => { this.$router.history.push('/admin/users') }, 500);
               }
               console.log(res);
             },
@@ -131,7 +129,6 @@ export default {
               return error;
             }
           )
-          console.log('==--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==', rdata);
         } else {
           // form have errors
         }

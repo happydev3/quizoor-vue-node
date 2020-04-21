@@ -6,8 +6,8 @@ import authHeader from './auth.header';
 class AdminService {
 
   //Level Management
-  getLevel() {
-    return axios.get(API_URL + 'getLevel', { headers: authHeader() })
+  getLevel(rdata) {
+    return axios.get(API_URL + 'getLevel/' + rdata.userID, { headers: authHeader() })
     .then(
       res => {
         return res;
