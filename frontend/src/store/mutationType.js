@@ -20,6 +20,7 @@ export const REGISTERFAILURE = "registerFailure"
 
 
 //admin
+export const LOADING = "loading"
 export const SUCCESSADDLEVEL = "successaddlevel";
 export const GETLEVELSUCCESS = "getlevelsuccess";
 

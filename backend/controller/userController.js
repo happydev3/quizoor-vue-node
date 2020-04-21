@@ -29,8 +29,10 @@ exports.registerNewUser = async (req, res) => {
 exports.loginUser = (req, res) => {
     User.findOne({ email: req.body.email }).then((user) => {
         if (user.status == 'activated') {
+            console.log('reareareasrear',user.password, req.body.password);
             bcrypt.compare(req.body.password, user.password)
             .then(val => {
+                console.log('reareareasrear',val);
                 if (val) {
                     user.generateAuthToken();
                     // const token = user.tokens.slice(-1)[0].token;

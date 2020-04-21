@@ -10,6 +10,7 @@ import {
 import {
   GETLEVELSUCCESS,
   SUCCESSADDLEVEL,
+  LOADING,
   // SUCCESSDELETE
 } from './mutationType';
 
@@ -73,10 +74,11 @@ const actions = {
     }
   },
   [GETLEVEL](context) {
-    let rdata = {
-      userID: state.user.user._id
-    }
-    return AdminService.getLevel(rdata).then(
+    let locations = []
+    state.user.user.locations.map(function(item) {
+      locations.push(item.value);
+    })
+    return AdminService.getLevel(locations).then(
       res => {
         context.commit(GETLEVELSUCCESS, res.data)
         return res;
@@ -101,6 +103,9 @@ const actions = {
 }
 
 const mutations = {
+  [LOADING](state) {
+    state.user = user;
+  },
   [SUCCESSADDLEVEL](state) {
       state.refresh = true;
   },

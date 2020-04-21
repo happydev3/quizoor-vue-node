@@ -6,8 +6,8 @@ import authHeader from './auth.header';
 class AdminService {
 
   //Level Management
-  getLevel(rdata) {
-    return axios.get(API_URL + 'getLevel/' + rdata.userID, { headers: authHeader() })
+  getLevel(locations) {
+    return axios.post(API_URL + 'getLevel', {locations : locations}, { headers: authHeader() })
     .then(
       res => {
         return res;
@@ -153,7 +153,6 @@ class AdminService {
     )
   }
   updateUser(rdata) {
-    console.log('_+_+_+_+_+_+__+_+_+_+_+_+_+_+_+_+_',rdata);
     return axios.post(API_URL + 'updateUser', {
       userID: rdata.userID,
       firstname: rdata.firstname,
@@ -167,6 +166,26 @@ class AdminService {
       res => {
         return res;
       },
+      error => {
+        return error;
+      }
+    )
+  }
+
+  //category
+  addCategory(rdata) {
+    return axios.post(API_URL + 'addCategory', {
+      name: rdata.name,
+      levelID: rdata.levelID,
+      userID: rdata.userID
+    }, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    ).catch(
       error => {
         return error;
       }

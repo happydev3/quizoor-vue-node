@@ -33,7 +33,7 @@
       <span class="text-danger text-sm"  v-show="errors.has('role')">{{ errors.first('role') }}</span>
     </div>
     <div class="vx-col sm:w-1/2 w-full mb-2">
-      <vs-select v-validate="'required'" v-model="location" name="location" multiple vs-autocomplete label="Location" class="w-full">
+      <vs-select v-validate="'required'" v-model="location" name="location" multiple autocomplete label="Location" class="w-full">
         <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="(item,index) in locations" />
       </vs-select>
       <span class="text-danger text-sm"  v-show="errors.has('location')">{{ errors.first('location') }}</span>

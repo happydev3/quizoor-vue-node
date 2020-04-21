@@ -1,8 +1,6 @@
 
 <template>
   <div id="data-list-list-view" class="data-list-container">
-
-    <!-- <LevelForm :isSidebarActive="addNewDataSidebar"  @closeSidebar="addNewDataSidebar = false"/> -->
     <vs-card>
       <div slot="header">
         <h3>
@@ -11,18 +9,20 @@
       </div>
       <div class="vx-row">
         <div class="vx-col sm:w-1/2 w-full mb-2">
-          <vs-input class="w-full" label-placeholder="Name" v-model="name" />
+          <vs-input class="w-full" label-placeholder="Name" v-validate="'required'" name="name" v-model="name" />
+          <span class="text-danger text-sm"  v-show="errors.has('name')">{{ errors.first('name') }}</span>
         </div>
         <div class="vx-col sm:w-1/2 w-full mb-2">
-          <vs-select v-validate="'required'" v-model="level" name="level" multiple vs-autocomplete label="Level" class="w-full">
-            <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="(item,index) in levels" />
+          <vs-select v-validate="'required'" v-model="level" name="level" autocomplete label="Level" class="w-full">
+            <vs-select-item :key="index" :value="item.id" :text="item.name" v-for="(item,index) in levels" />
           </vs-select>
+          <span class="text-danger text-sm"  v-show="errors.has('level')">{{ errors.first('level') }}</span>
         </div>
       </div>
       <div class="vx-row" :style="{marginTop: '10px'}">
         <div class="vx-col w-full">
-          <vs-button class="mr-3 mb-2">Add Data</vs-button>
-          <vs-button color="warning" type="border" class="mb-2" @click="input25 = input26 = '';">Reset</vs-button>
+          <vs-button class="mr-3 mb-2" @click.prevent="submitForm">Add Data</vs-button>
+          <vs-button color="warning" type="border" class="mb-2" @click="name = level = '';">Reset</vs-button>
         </div>
       </div>
     </vs-card>
@@ -89,7 +89,6 @@
 </template>
 
 <script>
-// import LevelForm from './LevelForm.vue';
 import ActionButtonGroup from '../components/ActionButtonGroup.vue'
 import AdminService from '@/services/admin.service.js'
 import { GETLEVEL } from '@/store/actionType';
@@ -104,7 +103,6 @@ export default {
       levels: [],
       itemsPerPage: 10,
       isMounted: false,
-      addNewDataSidebar: false,
       name: '',
       level: '',
       locations: []
@@ -119,15 +117,33 @@ export default {
         return this.$refs.table.currentx
       }
       return 0
-    }
+    },
+    ...mapState({
+      user: state => state.admin.user.user._id
+    })
   },
   methods: {
     getOrderStatusColor(status) {
       if(status == 'activated') return "success"
       if(status == 'deactivated') return "warning"
     },
-    newData(){
-      this.addNewDataSidebar = true;
+    submitForm() {
+      this.$validator.validateAll().then(result => {
+        if (result) {
+          let rdata = {
+            name: this.name,
+            levelID: this.level,
+            userID: this.user
+          }
+          console.log('+_++++++++++++++++++',rdata);
+          return AdminService.addCategory(rdata).then(
+            res => {
+              this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
+              setTimeout(() => { window.location.reload() }, 500);
+            }
+          )
+        }
+      })
     },
     multipleLevelDelete() {
       let selectedLevel = this.selected;
@@ -147,25 +163,17 @@ export default {
   created() {
     this.$store.dispatch(GETLEVEL).then(
       res => {
-        this.temps = res.data;
-        const items = []
-        this.temps.map(function(temp) {
-           let item = {}
-           item.name = temp.name;
-           item.status = temp.status;
-           if (temp.location == 'en') {
-             item.location = 'English'
-           } else if (temp.location == 'fr') {
-             item.location = 'French'
-           } else if (temp.location == 'de') {
-             item.location = 'German'
-           } else if (temp.location == 'pt'){
-             item.location = 'Portugese'
-           }
-           items.push(item);
+        this.items = res.data;
+        let tempData = [];
+        this.items.map(function(item) {
+          if(item.status == 'activated') {
+            tempData.push({
+              id: item._id,
+              name: item.name
+            })
+          }
         })
-        console.log(items);
-        this.levels = items;
+        this.levels = tempData;
       },
       error => {
         console.log(error);

@@ -83,6 +83,7 @@
 </template>
 <script>
 import { LOGIN } from '@/store/actionType';
+import { LOADING } from '@/store/mutationType'
 export default {
   name: 'Login',
   data() {
@@ -125,8 +126,10 @@ export default {
                 this.$vs.notify({ title:'Login successfully', text: 'Welcome to Quizoor', color:'success', position:'top-right' })
                 console.log('this.$store.getters.permission',this.$store.getters.permission)
                 if(this.$store.getters.permission == "superadmin" || this.$store.getters.permission == "admin") {
+                  this.$store.commit(LOADING);
                     this.$router.push('/admin');
                   } else if (this.$store.getters.permission == "author") {
+                    this.$store.commit(LOADING);
                     this.$router.push('/author');
                   } else if(this.$store.getters.permission == "user") {
                   this.$router.push('/');
