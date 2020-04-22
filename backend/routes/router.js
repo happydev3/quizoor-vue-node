@@ -4,6 +4,8 @@ const userController = require("../controller/userController");
 const adminLevelController = require("../controller/admin/adminLevelController");
 const adminUserController = require("../controller/admin/adminUserController");
 const adminCategoryController = require("../controller/admin/adminCategoryController");
+const adminSubjectController = require("../controller/admin/adminSubjectController");
+const adminChapterController = require("../controller/admin/adminChapterController");
 const auth = require('../config/auth');
 
 router.post("/register", userController.registerNewUser);
@@ -11,7 +13,7 @@ router.post("/login", userController.loginUser);
 router.get("/me", auth, userController.getUserDetails);
 
 
-router.post('/getLevel', auth, adminLevelController.getLevel);
+router.get('/getLevel/:id', auth, adminLevelController.getLevel);
 router.post('/addLevel', auth, adminLevelController.addLevel);
 router.post('/removeLevel', auth, adminLevelController.removeLevel);
 router.post('/changeStatusLevel', auth, adminLevelController.changeStatusLevel);
@@ -34,4 +36,19 @@ router.post('/removeCategory', auth, adminCategoryController.removeCategory);
 router.post('/multipleCategoryDelete', auth, adminCategoryController.multipleCategoryDelete);
 router.get('/getCategoryById/:id', auth, adminCategoryController.getCategoryById);
 router.post('/editCategory', auth, adminCategoryController.editCategory);
+
+router.get('/getSubject/:id', auth, adminSubjectController.getSubject);
+router.get('/getCategorybySelectedLevel/:id', auth, adminSubjectController.getCategorybySelectedLevel);
+router.post('/addSubject', auth, adminSubjectController.addSubject);
+router.post('/updateStatusSubject', auth, adminSubjectController.updateStatusSubject);
+router.post('/removeSubject', auth, adminSubjectController.removeSubject);
+router.get('/getSubjectById/:id', auth, adminSubjectController.getSubjectById);
+router.post('/editSubject', auth, adminSubjectController.editSubject);
+router.post('/multipleSubjectDelete', auth, adminSubjectController.multipleSubjectDelete);
+
+router.get('/getSubjectbySelectedCategory/:id', auth, adminChapterController.getSubjectbySelectedCategory)
+router.post('/addChapter', auth, adminChapterController.addChapter);
+router.get('/getChapter/:id', auth, adminChapterController.getChapter);
+router.post('/updateStatusChapter', auth, adminChapterController.updateStatusChapter);
+router.post('/removeChapter', auth, adminChapterController.removeChapter);
 module.exports = router;

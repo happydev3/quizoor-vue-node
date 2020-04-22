@@ -1,34 +1,50 @@
 const Level = require('../../model/Level');
 const User = require('../../model/User');
+const Subject = require('../../model/Subject')
 const Category = require('../../model/Catetory');
 const chalk = require('chalk');
 
-exports.getCategory = (req, res) => {
-    let id = req.params.id;
-    console.log(chalk.greenBright('_______________res params id__________________________res______category______________________',id));
-    Category.find({ user: id }).populate('level').then((category) => {
+
+exports.getCategorybySelectedLevel = (req, res) => {
+    let levelID = req.params.id;
+    console.log('requires levelID', levelID)
+    Category.find({ level: levelID, status: 'activated' }).populate('level').then((category) => {
         console.log('+++++++++++++++_____________________res______category_______________++++++++++++++++', chalk.cyan(category))
         return res.status(200).json(category);
     })
     .catch(error => {
         return res.status(400).json(error);
     });
+}
+exports.getSubject = (req, res) => {
+    let id = req.params.id;
+    console.log(chalk.greenBright('_______________res params id__________________________res______category______________________',id));
+    Subject.find({ user: id }).populate('level').populate('category').then((subject) => {
+        console.log('+++++++++++++++_____________________res______category_______________++++++++++++++++', chalk.cyan(subject))
+        return res.status(200).json(subject);
+    })
+    .catch(error => {
+        return res.status(400).json(error);
+    });
 }       
-exports.addCategory = (req, res) => {
+exports.addSubject = (req, res) => {
+    console.log(req.body)
     const name = req.body.name;
     const levelID = req.body.levelID;
     const userID = req.body.userID;
-    console.log(chalk.green('this is name and location',name,levelID,userID));
-    Category.findOne({name: name, level: levelID}).then((category) => {
-        if(category) {
-            return res.status(200).json({message: 'This category has already existed!'});
+    const categoryID = req.body.categoryID;
+    console.log(chalk.green('this is name and location',name, levelID, userID, categoryID));
+    Subject.findOne({name: name, level: levelID, category: categoryID}).then((subject) => {
+        if(subject) {
+            return res.status(200).json({message: 'This Subject has already existed!'});
         } else {
-            let category = new Category({
+            let subject = new Subject({
                 name: name,
                 level: levelID,
-                user: userID
+                user: userID,
+                category: categoryID
             });
-            category.save();
+            subject.save();
             return res.status(200).json({message: "Successfully Added"});
         }
     })
@@ -37,9 +53,9 @@ exports.addCategory = (req, res) => {
     })
 }
 
-exports.removeCategory = (req, res) => {
+exports.removeSubject = (req, res) => {
     const id = req.body.id;
-    Category.deleteOne({ _id: id}).then(
+    Subject.deleteOne({ _id: id}).then(
         res => {
             return res.status(200).json({message: 'The Item successfully deleted'})
         },
@@ -53,11 +69,12 @@ exports.removeCategory = (req, res) => {
     )
 }
 
-exports.changeStatusCatetory = (req, res) => {
+exports.updateStatusSubject = (req, res) => {
+    console.log(chalk.cyan('++++++updatestatussubject++++',JSON.stringify(req.body)));
     const id = req.body.id;
     const status = req.body.status;
     if (status == 'activated') {
-        Category.findByIdAndUpdate(id, { status: 'deactivated'}).then(
+        Subject.findByIdAndUpdate(id, { status: 'deactivated'}).then(
             res => {
                 return res.status(200).json({message: 'Status changed successfully'})
             },
@@ -70,7 +87,7 @@ exports.changeStatusCatetory = (req, res) => {
             }
         )
     } else if(status == 'deactivated') {
-        Category.findByIdAndUpdate(id, { status: 'activated'}).then(
+        Subject.findByIdAndUpdate(id, { status: 'activated'}).then(
             res => {
                 return res.status(200).json({message: 'Status changed successfully'})
             },
@@ -85,13 +102,13 @@ exports.changeStatusCatetory = (req, res) => {
     }
     
 }
-exports.getCategoryById = (req, res) => {
+exports.getSubjectById = (req, res) => {
     const id = req.params.id;
-    Category.findOne({_id: id}).then(
-        category => {
-            if(category) {
-                console.log(chalk.cyan(category))
-                return res.status(200).json(category);
+    Subject.findOne({_id: id}).then(
+        subject => {
+            if(subject) {
+                console.log(chalk.cyan(subject))
+                return res.status(200).json(subject);
             } else {
                 return res.status(200).json('');
             }
@@ -105,15 +122,18 @@ exports.getCategoryById = (req, res) => {
         }
     )
 }
-exports.editCategory = async (req, res) => {
-    const id = req.body.categoryID;
+exports.editSubject = async (req, res) => {
+    console.log(req.body);
+    const id = req.body.subjectID;
     const name = req.body.name;
-    const level = req.body.level;
-    console.log(chalk.cyan(id, name, level));
-    checkCategory = await Category.findOne({name: name, level: level});
-    if(!checkCategory) {
-        Category.findByIdAndUpdate(id, { name: name, level: level }).then(
-            category => {
+    const level = req.body.levelID;
+    const category = req.body.categoryID;
+    console.log(id,name, level,category)
+    let checkSubject = await Subject.findOne({ name: name, level: level, category: category});
+    console.log(checkSubject)
+    if (!checkSubject) {
+        Subject.findByIdAndUpdate(id, { name: name, level: level, category: category }).then(
+            subject => {
                 return res.status(200).json({message: 'successfully updated'})
             }
         ).catch(
@@ -122,13 +142,13 @@ exports.editCategory = async (req, res) => {
             }
         )
     } else {
-        return res.status(201).json({message: 'This category has already existed!'})
+        return res.status(201).json({message: 'This Subject has already existed!'});
     }
 }
-exports.multipleCategoryDelete = (req, res) => {
+exports.multipleSubjectDelete = (req, res) => {
     let list = req.body.list;
     console.log(chalk.cyan(list))
-    Category.deleteMany({_id: {$in: list }},
+    Subject.deleteMany({_id: {$in: list }},
         function(err, result) {
             if (err) {
                 res.send(err);

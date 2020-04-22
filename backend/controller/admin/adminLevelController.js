@@ -3,10 +3,10 @@ const User = require('../../model/User');
 const chalk = require('chalk');
 
 exports.getLevel = (req, res) => {
-    let locations = req.body.locations;
-    Level.find({ location: {$in:locations}}).then((level) => {
+    let id = req.params.id;
+    Level.find({ userID: id}).then((level) => {
         if(level) {
-            console.log(chalk.cyan(level))
+            // console.log(chalk.cyan(level))
             return res.status(200).json(level);
         } else {
             return res.status(200).json('');
@@ -16,27 +16,28 @@ exports.getLevel = (req, res) => {
         return res.status(400).json(error);
     });
 }       
-exports.addLevel = (req, res) => {
+exports.addLevel = async (req, res) => {
     const name = req.body.name;
     const location = req.body.location;
     const userID = req.body.userID;
     console.log(chalk.green('this is name and location',name,location,userID));
-    Level.findOne({name: name, location: location}).then((level) => {
-        if(level) {
-            return res.status(200).json({message: 'This level has been already existed!'});
-        } else {
+    let checkLevel = await Level.findOne({name: name, location: location})
+    console.log(checkLevel);
+    if(checkLevel) {
+        return res.status(201).json({message: 'This level has already existed!'});
+    } else {
+        if (name&&location&&userID) {
             let level = new Level({
                 name: name,
                 location: location,
                 userID: userID
             });
             level.save();
-            return res.status(200).json({level});
+            return res.status(200).json({message: 'Added successfully'});
+        } else {
+            return res.status(201).json({message: 'inValid error'});
         }
-    })
-    .catch(error => {
-        return res.status(400).json({error: error});
-    })
+    }
 }
 
 exports.removeLevel = (req, res) => {
@@ -108,19 +109,25 @@ exports.getLevelById = (req, res) => {
         }
     )
 }
-exports.updateLevelById = (req, res) => {
+exports.updateLevelById = async (req, res) => {
     const id = req.body.id;
     const name = req.body.name;
     console.log(chalk.cyan(id, name));
-    Level.findByIdAndUpdate(id, { name: name }).then(
-        res => {
-            return res.status(200).json({message:'successfully updated'})
-        }
-    ).catch(
-        error => {
-            return res.status(201).json({message: error})
-        }
-    )
+    let checkLevel = await Level.findOne({name: name});
+    if( !checkLevel ) {
+        Level.findByIdAndUpdate(id, { name: name }).then(
+            (level) => {    
+                return res.status(200).json({message: 'successfully updated'})
+            }
+        ).catch(
+            error => {
+                return res.status(201).json({message: error})
+            }
+        )
+    } else {
+        return res.status(200).json({message:'This level has already existed!'})
+    }
+    
 }
 exports.multipleDeleteLevel = (req, res) => {
     let list = req.body.list;

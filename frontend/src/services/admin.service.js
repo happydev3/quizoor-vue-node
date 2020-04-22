@@ -6,8 +6,8 @@ import authHeader from './auth.header';
 class AdminService {
 
   //Level Management
-  getLevel(locations) {
-    return axios.post(API_URL + 'getLevel', {locations : locations}, { headers: authHeader() })
+  getLevel(user) {
+    return axios.get(API_URL + 'getLevel/' + user, { headers: authHeader() })
     .then(
       res => {
         return res;
@@ -26,6 +26,7 @@ class AdminService {
     }, { headers: authHeader() })
     .then(
       res => {
+        console.log(res);
         return res;
       },
       error => {
@@ -271,6 +272,182 @@ class AdminService {
       name: rdata.name,
       level: rdata.level
     }, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+
+
+  //subjects
+  getCategorybySelectedLevel(rdata) {
+    return axios.get(API_URL + 'getCategorybySelectedLevel/' + rdata, { headers: authHeader() }).then(
+      res => {
+        return res;
+      }
+    ).catch(
+      error => {
+        return error;
+      }
+    )
+  }
+  addSubject(rdata) {
+    return axios.post(API_URL + 'addSubject', {
+      name: rdata.name,
+      levelID: rdata.levelID,
+      categoryID: rdata.categoryID,
+      userID: rdata.userID
+    }, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    ).catch(
+      error => {
+        return error;
+      }
+    )
+  }
+  getSubject(rdata) {
+    let id = rdata;
+    return axios.get(API_URL + 'getSubject/' + id, { headers: authHeader() }).then(
+      res => {
+        return res;
+      }
+    ).catch (error => {
+      return error;
+    })
+  }
+  updateStatusSubject(data) {
+    return axios.post(API_URL + 'updateStatusSubject', {
+      id: data.id,
+      status: data.status
+    }, { headers: authHeader() })
+    .then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  multipleSubjectDelete(list) {
+    return axios.post(API_URL + "multipleSubjectDelete", {list: list}, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  removeSubject(id) {
+    return axios.post(API_URL + 'removeSubject', {
+      id: id
+    }, { headers: authHeader() })
+    .then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  getSubjectById(id) {
+    return axios.get(API_URL + 'getSubjectById/' + id, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  editSubject(rdata) {
+    return axios.post(API_URL + 'editSubject', {
+      subjectID: rdata.subjectID,
+      name: rdata.name,
+      levelID: rdata.levelID,
+      userID: rdata.userID,
+      categoryID: rdata.categoryID
+    }, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+
+  //chapter
+  getSubjectbySelectedCategory(rdata) {
+    return axios.get(API_URL + 'getSubjectbySelectedCategory/' + rdata, { headers: authHeader() }).then(
+      res => {
+        return res;
+      }
+    ).catch(
+      error => {
+        return error;
+      }
+    )
+  }
+  addChapter(rdata) {
+    return axios.post(API_URL + 'addChapter', {
+      name: rdata.name,
+      levelID: rdata.levelID,
+      categoryID: rdata.categoryID,
+      subjectID: rdata.subjectID,
+      userID: rdata.userID
+    }, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    ).catch(
+      error => {
+        return error;
+      }
+    )
+  }
+  getChapter(rdata) {
+    let id = rdata;
+    return axios.get(API_URL + 'getChapter/' + id, { headers: authHeader() }).then(
+      res => {
+        return res;
+      }
+    ).catch (error => {
+      return error;
+    })
+  }
+  updateStatusChapter(data) {
+    return axios.post(API_URL + 'updateStatusChapter', {
+      id: data.id,
+      status: data.status
+    }, { headers: authHeader() })
+    .then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  removeChapter(id) {
+    return axios.post(API_URL + 'removeChapter', {
+      id: id
+    }, { headers: authHeader() })
+    .then(
       res => {
         return res;
       },

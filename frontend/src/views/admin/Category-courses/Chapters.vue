@@ -1,19 +1,19 @@
 
 <template>
   <div id="data-list-list-view" class="data-list-container">
-    <vs-table ref="table" multiple v-model="selected"  pagination :max-items="itemsPerPage" search :data="categories">
+    <vs-table ref="table" multiple v-model="selected"  pagination :max-items="itemsPerPage" search :data="chapters">
 
       <div slot="header" class="flex flex-wrap-reverse items-center flex-grow justify-between">
 
         <div class="flex flex-wrap-reverse items-center">
-          <vs-button color="danger" type="border" :style="{marginRight: '10px'}" @click="multipleCategoryDelete"><feather-icon icon="TrashIcon" svgClasses="h-4 w-4" /> {{$t('delete')}}</vs-button>
-          <vs-button color="success" type="border" @click="newData"><feather-icon icon="PlusIcon" svgClasses="h-4 w-4" /> {{$t('new')}}</vs-button>
+          <vs-button color="danger" type="filled" :style="{marginRight: '10px'}" @click="multipleSubjectDelete"><feather-icon icon="TrashIcon" svgClasses="h-4 w-4" /> {{$t('delete')}}</vs-button>
+          <vs-button color="success" type="filled" @click="newData"><feather-icon icon="PlusIcon" svgClasses="h-4 w-4" /> {{$t('new')}}</vs-button>
         </div>
 
         <!-- ITEMS PER PAGE -->
         <vs-dropdown vs-trigger-click class="cursor-pointer mb-4 mr-4">
           <div class="p-4 border border-solid d-theme-border-grey-light rounded-full d-theme-dark-bg cursor-pointer flex items-center justify-between font-medium">
-            <span class="mr-2">{{ currentPage * itemsPerPage - (itemsPerPage - 1) }} - {{ categories.length - currentPage * itemsPerPage > 0 ? currentPage * itemsPerPage : categories.length }} of {{ categories.length }}</span>
+            <span class="mr-2">{{ currentPage * itemsPerPage - (itemsPerPage - 1) }} - {{ chapters.length - currentPage * itemsPerPage > 0 ? currentPage * itemsPerPage : chapters.length }} of {{ chapters.length }}</span>
             <feather-icon icon="ChevronDownIcon" svgClasses="h-4 w-4" />
           </div>
           <vs-dropdown-menu>
@@ -37,6 +37,8 @@
         <vs-th sort-key="name">{{$t('name')}}</vs-th>
         <vs-th sort-key="status">{{$t('status')}}</vs-th>
         <vs-th sort-key="level">{{$t('level')}}</vs-th>
+        <vs-th sort-key="category">{{$t('category')}}</vs-th>
+        <vs-th sort-key="subject">{{$t('subject')}}</vs-th>
         <!-- <vs-th sort-key="location">{{$t('language')}}</vs-th> -->
       </template>
 
@@ -51,6 +53,12 @@
             </vs-td>
             <vs-td>
               <p class="product-name font-medium">{{ tr.level.name }}</p>
+            </vs-td>
+            <vs-td>
+              <p class="product-name font-medium">{{ tr.category.name }}</p>
+            </vs-td>
+            <vs-td>
+              <p class="product-name font-medium">{{ tr.subject.name }}</p>
             </vs-td>
             <vs-td>
               <action-button-group :ID="tr._id" :status="tr.status"></action-button-group>
@@ -76,7 +84,9 @@ export default {
       itemsPerPage: 10,
       isMounted: false,
       locations: [],
-      categories: []
+      categories: [],
+      subjects: [],
+      chapters: []
     }
   },
   computed: {
@@ -98,13 +108,13 @@ export default {
       if(status == 'activated') return "success"
       if(status == 'deactivated') return "warning"
     },
-    multipleCategoryDelete() {
+    multipleSubjectDelete() {
       let selectedCategory = this.selected;
       var list = [];
       selectedCategory.map(function(value) {
         list.push(value._id);
       });
-      return AdminService.multipleCategoryDelete(list).then(
+      return AdminService.multipleSubjectDelete(list).then(
         res => {
           this.$vs.notify({ title:'Deleted Successfully', color:'success', position:'top-right' });
           setTimeout(function(){ window.location.reload() }, 500);
@@ -113,13 +123,13 @@ export default {
       )
     },
     newData() {
-      this.$router.push('/admin/category-courses/categories/add');
+      this.$router.push('/admin/category-courses/chapters/add');
     }
   },
   created() {
-    return AdminService.getCategory(this.user).then(
+    return AdminService.getChapter(this.user).then(
       res => {
-        return this.categories = res.data;
+        return this.chapters = res.data;
       }
     )
   },

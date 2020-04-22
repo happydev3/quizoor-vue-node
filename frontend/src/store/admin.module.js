@@ -4,7 +4,9 @@ import {
   REMOVEDATA,
   CHANGESTATUS,
   ADDLEVEL,
-  GETLEVEL
+  GETLEVEL,
+  LEVELSELECT,
+  CATEGORYSELECT
 } from './actionType';
 
 import {
@@ -13,6 +15,7 @@ import {
   LOADING,
   // SUCCESSDELETE
 } from './mutationType';
+import adminService from '../services/admin.service';
 
 const user  = JSON.parse(localStorage.getItem('user'));
 
@@ -20,6 +23,7 @@ const state = {
   refresh: false,
   user: user,
   levels: [],
+  categories: [],
   popuplevelshow: false,
 }
 
@@ -47,6 +51,24 @@ const actions = {
       )
     } else if(route == 'categories') {
       return AdminService.removeCategory(id).then(
+        res => {
+          return res;
+        },
+        error => {
+          return error;
+        }
+      )
+    } else if(route == 'subjects') {
+      return AdminService.removeSubject(id).then(
+        res => {
+          return res;
+        },
+        error => {
+          return error;
+        }
+      )
+    } else if(route == 'chapters') {
+      return AdminService.removeChapter(id).then(
         res => {
           return res;
         },
@@ -89,14 +111,33 @@ const actions = {
           return error
         }
       )
+    } else if(route == 'subjects') {
+      return AdminService.updateStatusSubject(data).then(
+        res => {
+          return res
+        },
+        error => {
+          return error
+        }
+      )
+    } else if(route == 'chapters') {
+      return AdminService.updateStatusChapter(data).then(
+        res => {
+          return res
+        },
+        error => {
+          return error
+        }
+      )
     }
   },
   [GETLEVEL](context) {
-    let locations = []
-    state.user.user.locations.map(function(item) {
-      locations.push(item.value);
-    })
-    return AdminService.getLevel(locations).then(
+    // let locations = []
+    // state.user.user.locations.map(function(item) {
+    //   locations.push(item.value);
+    // })
+    let user = state.user.user._id
+    return AdminService.getLevel(user).then(
       res => {
         context.commit(GETLEVELSUCCESS, res.data)
         return res;
@@ -115,6 +156,31 @@ const actions = {
     return AdminService.addLevel(levelData).then(
       res => {
         context.commit(SUCCESSADDLEVEL, res);
+        return res;
+      }
+    )
+  },
+  [LEVELSELECT](context, rdata) {
+    console.log('this is level id ......', rdata);
+    return adminService.getCategorybySelectedLevel(rdata).then(
+      res => {
+        return res;
+      }
+    ).catch(
+      error => {
+        return error;
+      }
+    )
+  },
+  [CATEGORYSELECT](context, rdata) {
+    console.log('this is category id ......', rdata);
+    return adminService.getSubjectbySelectedCategory(rdata).then(
+      res => {
+        return res;
+      }
+    ).catch(
+      error => {
+        return error;
       }
     )
   }

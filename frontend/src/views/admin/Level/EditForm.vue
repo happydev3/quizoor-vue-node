@@ -46,8 +46,12 @@ export default {
       }
       return AdminService.updateLevelById(rdata).then(
         res => {
-          this.$vs.notify({ title:'Updated Successfully', color:'success', position:'top-right' });
-          setTimeout(function(){ this.$router.push('/admin/level') }, 500);
+          if(res.data.message == 'successfully updated') {
+            this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
+            setTimeout(() => { this.$router.push('/admin/level') }, 500);
+          } else if (res.data.message == 'This level has already existed!') {
+            this.$vs.notify({ title: res.data.message, color:'warning', position:'top-right' });
+          }
           console.log(res);
         }
       )

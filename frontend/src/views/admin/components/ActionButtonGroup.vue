@@ -44,6 +44,10 @@ export default {
         this.$router.push('users/edit/' + id);
       } else if(route == 'categories') {
         this.$router.push('categories/edit/' + id);
+      } else if(route == 'subjects') {
+        this.$router.push('subjects/edit/' + id);
+      } else if(route == 'chapters') {
+        this.$router.push('chapters/edit/' + id);
       }
     },
     changeStatus() {

@@ -172,6 +172,24 @@ const router = new Router({
               }
           },
           {
+              path: 'category-courses/subjects/add',
+              name: 'addSubjects',
+              component: () => import('./views/admin/Category-courses/SubjectForm'),
+              meta: {
+                pageTitle: 'addSubjects',
+                rule: 'editor'
+              }
+          },
+          {
+              path: 'category-courses/subjects/edit/:id',
+              name: 'editSubjects',
+              component: () => import('./views/admin/Category-courses/SubjectForm'),
+              meta: {
+                pageTitle: 'editSubjects',
+                rule: 'editor'
+              }
+          },
+          {
               path: 'category-courses/chapters',
               name: 'chapters',
               component: () => import('./views/admin/Category-courses/Chapters.vue'),
@@ -182,6 +200,24 @@ const router = new Router({
                     { title: 'Chapters', active: true},
                 ],
                 pageTitle: 'Chapters',
+                rule: 'editor'
+              }
+          },
+          {
+              path: 'category-courses/chapters/add',
+              name: 'addChapters',
+              component: () => import('./views/admin/Category-courses/ChapterForm'),
+              meta: {
+                pageTitle: 'addChapters',
+                rule: 'editor'
+              }
+          },
+          {
+              path: 'category-courses/chapters/edit/:id',
+              name: 'editChapters',
+              component: () => import('./views/admin/Category-courses/ChapterForm'),
+              meta: {
+                pageTitle: 'editChapters',
                 rule: 'editor'
               }
           },

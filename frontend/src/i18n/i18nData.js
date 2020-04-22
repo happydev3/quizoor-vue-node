@@ -36,7 +36,9 @@ export default {
     email: 'email',
     role: 'role',
     createdAt: 'created at',
-    language: 'language'
+    language: 'language',
+    category: 'category',
+    subject: 'subject'
 	},
 	de: {
 		Dashboard: 'Instrumententafel',
@@ -74,7 +76,9 @@ export default {
     email: 'email',
     role: 'rol',
     createdAt: 'creëren op',
-    language: 'language'
+    language: 'language',
+    category: 'category',
+    subject: 'subject'
 	},
 	fr: {
 		Dashboard: 'Tableau de bord',
@@ -112,7 +116,9 @@ export default {
     email: 'email',
     role: 'rôle',
     createdAt: 'créer à',
-    language: 'language'
+    language: 'language',
+    category: 'category',
+    subject: 'subject'
 	},
 	pt: {
 		Dashboard: 'painel de controle',
@@ -150,6 +156,8 @@ export default {
     email: 'email',
     role: 'Função',
     createdAt: 'criar em',
-    language: 'language'
+    language: 'language',
+    category: 'category',
+    subject: 'subject'
 	}
 }

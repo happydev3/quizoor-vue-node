@@ -6,8 +6,8 @@
       <div slot="header" class="flex flex-wrap-reverse items-center flex-grow justify-between">
 
         <div class="flex flex-wrap-reverse items-center">
-          <vs-button color="danger" type="border" :style="{marginRight: '10px'}" @click="multipleCategoryDelete"><feather-icon icon="TrashIcon" svgClasses="h-4 w-4" /> {{$t('delete')}}</vs-button>
-          <vs-button color="success" type="border" @click="newData"><feather-icon icon="PlusIcon" svgClasses="h-4 w-4" /> {{$t('new')}}</vs-button>
+          <vs-button color="danger" type="filled" :style="{marginRight: '10px'}" @click="multipleCategoryDelete"><feather-icon icon="TrashIcon" svgClasses="h-4 w-4" /> {{$t('delete')}}</vs-button>
+          <vs-button color="success" type="filled" @click="newData"><feather-icon icon="PlusIcon" svgClasses="h-4 w-4" /> {{$t('new')}}</vs-button>
         </div>
 
         <!-- ITEMS PER PAGE -->

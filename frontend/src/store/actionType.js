@@ -23,3 +23,12 @@ export const CHANGESTATUS = "changestatus"
 ///level
 export const ADDLEVEL = "addlevel"
 export const GETLEVEL = "getlevel"
+
+//subject
+
+export const LEVELSELECT = "levelselect"
+
+
+//chapter
+
+export const CATEGORYSELECT = 'categoryselect'

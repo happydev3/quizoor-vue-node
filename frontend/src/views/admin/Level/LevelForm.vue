@@ -9,10 +9,12 @@
 
     <VuePerfectScrollbar class="scroll-area--data-list-add-new pt-4 pb-6" :settings="settings">
       <div class="p-6">
-        <vs-input label="Name" name="name" v-model="name" class="mt-5 w-full" />
+        <vs-input v-validate="'required'" label="Name" name="name" v-model="name" class="mt-5 w-full" />
+        <span class="text-danger text-sm"  v-show="errors.has('name')">{{ errors.first('name') }}</span>
         <vs-select v-validate="'required'" v-model="location" name="location"  label="Location" class="w-full">
           <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="(item,index) in locations" />
         </vs-select>
+        <span class="text-danger text-sm"  v-show="errors.has('location')">{{ errors.first('location') }}</span>
         <div class="flex flex-wrap items-center justify-center p-6 custom-button-between" slot="footer">
           <vs-button class="mr-6 btnCustom" @click="addLevel">Add Data</vs-button>
           <vs-button type="border btnCustom" color="danger" @click="isSidebarActiveLocal = false">Cancel</vs-button>
@@ -73,22 +75,32 @@ export default {
   },
   methods: {
     addLevel() {
-      let rdata = {
-        name: this.name,
-        location: this.location,
-        userID: this.userID,
-      }
-      this.$store.dispatch(ADDLEVEL, rdata).then(
-        res => {
-          console.log(res);
-          this.$vs.notify({ title:'Level added succesfully',  color:'success', position:'top-right' })
-          this.name = '';
-          this.location = ''
-        },
-        error => {
-          console.log(error);
+      this.$validator.validateAll().then(result => {
+        if (result) {
+          let rdata = {
+            name: this.name,
+            location: this.location,
+            userID: this.userID,
+          }
+          this.$store.dispatch(ADDLEVEL, rdata).then(
+            res => {
+              console.log(res);
+              if(res.data.message == 'Added successfully') {
+                  this.$vs.notify({ title: res.data.message,  color:'success', position:'top-right' })
+              } else if (res.data.message == 'This level has already existed!') {
+                  this.$vs.notify({ title: res.data.message,  color:'warning', position:'top-right' })
+              }
+
+              this.name = '';
+              this.location = ''
+            },
+            error => {
+              console.log(error);
+            }
+          )
         }
-      )
+      }
+    )
     }
   },
   components: {
