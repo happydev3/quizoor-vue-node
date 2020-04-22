@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-
-const CategorySchema = mongoose.Schema({
+const Schema = mongoose.Schema;
+const CategorySchema = Schema({
     name: {
         type: String,
         required: true
@@ -9,13 +9,15 @@ const CategorySchema = mongoose.Schema({
         type: String,
         default: 'activated'
     },
-    userID: {
-        type: String,
-        required: true
+    user: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
     },
-    levelID: {
-        type: String,
-        required: true
+    level: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'Level'
     },
     create_date: { type:Date, default:Date.now }
 });

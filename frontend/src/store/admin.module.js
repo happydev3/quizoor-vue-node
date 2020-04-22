@@ -45,6 +45,15 @@ const actions = {
           return error;
         }
       )
+    } else if(route == 'categories') {
+      return AdminService.removeCategory(id).then(
+        res => {
+          return res;
+        },
+        error => {
+          return error;
+        }
+      )
     }
   },
   [CHANGESTATUS](context, rdata) {
@@ -69,6 +78,15 @@ const actions = {
         },
         error => {
           return error;
+        }
+      )
+    } else if(route == 'categories') {
+      return AdminService.updateStatusCategory(data).then(
+        res => {
+          return res
+        },
+        error => {
+          return error
         }
       )
     }

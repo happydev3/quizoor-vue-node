@@ -95,8 +95,8 @@ class AdminService {
   }
 
   //User Management
-  getAllUser() {
-    return axios.get(API_URL + 'getAllUser', { headers: authHeader() }).then(
+  getAllUser(id) {
+    return axios.get(API_URL + 'getAllUser/' + id, { headers: authHeader() }).then(
       res => {
         return res;
       },
@@ -152,6 +152,23 @@ class AdminService {
       }
     )
   }
+  addUser(rdata) {
+    return axios.post(API_URL + 'addUser', {
+      firstname: rdata.firstname,
+      lastname: rdata.lastname,
+      email: rdata.email,
+      password: rdata.password,
+      role: rdata.role,
+      location: rdata.location
+    }, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
   updateUser(rdata) {
     return axios.post(API_URL + 'updateUser', {
       userID: rdata.userID,
@@ -186,6 +203,77 @@ class AdminService {
         return error;
       }
     ).catch(
+      error => {
+        return error;
+      }
+    )
+  }
+  getCategory(rdata) {
+    let id = rdata;
+    return axios.get(API_URL + 'getCategory/' + id, { headers: authHeader() }).then(
+      res => {
+        return res;
+      }
+    ).catch (error => {
+      return error;
+    })
+  }
+  updateStatusCategory(data) {
+    return axios.post(API_URL + 'changeStatusCatetory', {
+      id: data.id,
+      status: data.status
+    }, { headers: authHeader() })
+    .then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  removeCategory(id) {
+    return axios.post(API_URL + 'removeCategory', {
+      id: id
+    }, { headers: authHeader() })
+    .then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  multipleCategoryDelete(list) {
+    return axios.post(API_URL + "multipleCategoryDelete", {list: list}, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  getCategoryById(id) {
+    return axios.get(API_URL + 'getCategoryById/' + id, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  editCategory(rdata) {
+    return axios.post(API_URL + 'editCategory', {
+      categoryID: rdata.categoryID,
+      name: rdata.name,
+      level: rdata.level
+    }, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
       error => {
         return error;
       }

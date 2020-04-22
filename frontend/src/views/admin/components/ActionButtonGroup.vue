@@ -42,6 +42,8 @@ export default {
         this.$router.push('level/edit/' + id);
       } else if(route == 'users') {
         this.$router.push('users/edit/' + id);
+      } else if(route == 'categories') {
+        this.$router.push('categories/edit/' + id);
       }
     },
     changeStatus() {

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
-
-const levelSchema = mongoose.Schema({
+// const User = require('./User');
+const Schema = mongoose.Schema;
+const levelSchema = Schema({
     name: {
         type: String,
         required: true
@@ -10,7 +11,8 @@ const levelSchema = mongoose.Schema({
         default: 'activated'
     },
     userID: {
-        type: String
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     location: {
         type: String,

@@ -8,6 +8,7 @@
 
         <div class="flex flex-wrap-reverse items-center">
           <vs-button color="danger" type="border" :style="{marginRight: '10px'}" @click="multipleUserDelete"><feather-icon icon="TrashIcon" svgClasses="h-4 w-4" /> {{$t('delete')}}</vs-button>
+          <vs-button color="success" type="border" @click="newData"><feather-icon icon="PlusIcon" svgClasses="h-4 w-4" /> {{$t('new')}}</vs-button>
         </div>
 
         <!-- ITEMS PER PAGE -->
@@ -76,6 +77,7 @@
 <script>
 import ActionButtonGroup from '../components/ActionButtonGroup.vue'
 import AdminService from '@/services/admin.service.js'
+import { mapState } from 'vuex';
 export default {
   components: {
     ActionButtonGroup
@@ -97,7 +99,10 @@ export default {
         return this.$refs.table.currentx
       }
       return 0
-    }
+    },
+    ...mapState({
+      userID: state => state.auth.initialState.user.user._id
+    })
   },
   methods: {
     getOrderStatusColor(status) {
@@ -117,10 +122,13 @@ export default {
           console.log(res);
         }
       )
+    },
+    newData() {
+      this.$router.push('/admin/users/add/');
     }
   },
   created() {
-    return AdminService.getAllUser().then(
+    return AdminService.getAllUser(this.userID).then(
       res => {
         // this.users = res.data;
         const items = res.data;

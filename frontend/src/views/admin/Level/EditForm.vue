@@ -1,5 +1,5 @@
 <template>
-  <vs-card>
+  <vs-card class="add-form">
     <div slot="header">
       <h3>
         Level Edit Form
@@ -58,3 +58,6 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+@import "@/assets/scss/custom/table.scss"
+</style>

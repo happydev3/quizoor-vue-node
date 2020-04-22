@@ -19,13 +19,19 @@ router.get('/getLevelById/:id', auth, adminLevelController.getLevelById);
 router.post('/updateLevelById', auth, adminLevelController.updateLevelById);
 router.post('/multipleDeleteLevel', auth, adminLevelController.multipleDeleteLevel);
 
-router.get('/getAllUser', auth, adminUserController.getAllUser);
+router.get('/getAllUser/:id', auth, adminUserController.getAllUser);
 router.post('/changeStatusUser', auth, adminUserController.changeStatusUser);
 router.post('/removeUser', auth, adminUserController.removeUser);
 router.post('/multipleDeleteUser', auth, adminUserController.multipleDeleteUser);
 router.get('/getUserById/:id', auth, adminUserController.getUserById);
 router.post('/updateUser', auth, adminUserController.updateUser);
+router.post('/addUser', auth, adminUserController.addUser);
 
 router.post('/addCategory', auth, adminCategoryController.addCategory);
-router.get('/getCategory', auth, adminCategoryController.getCategory);
+router.get('/getCategory/:id', auth, adminCategoryController.getCategory);
+router.post('/changeStatusCatetory', auth, adminCategoryController.changeStatusCatetory);
+router.post('/removeCategory', auth, adminCategoryController.removeCategory);
+router.post('/multipleCategoryDelete', auth, adminCategoryController.multipleCategoryDelete);
+router.get('/getCategoryById/:id', auth, adminCategoryController.getCategoryById);
+router.post('/editCategory', auth, adminCategoryController.editCategory);
 module.exports = router;

@@ -125,8 +125,6 @@ const router = new Router({
               rule: 'editor'
             }
           },
-
-
           {
               path: 'category-courses/categories',
               name: 'categories',
@@ -138,6 +136,24 @@ const router = new Router({
                     { title: 'Categories', active: true},
                 ],
                 pageTitle: 'Categories',
+                rule: 'editor'
+              }
+          },
+          {
+              path: 'category-courses/categories/add',
+              name: 'addCategories',
+              component: () => import('./views/admin/Category-courses/CategoryForm'),
+              meta: {
+                pageTitle: 'addCategories',
+                rule: 'editor'
+              }
+          },
+          {
+              path: 'category-courses/categories/edit/:id',
+              name: 'editCategories',
+              component: () => import('./views/admin/Category-courses/CategoryForm'),
+              meta: {
+                pageTitle: 'editCategories',
                 rule: 'editor'
               }
           },
@@ -183,9 +199,17 @@ const router = new Router({
             }
           },
           {
+            path: 'users/add/',
+            name: 'usersAdd',
+            component: () =>import('./views/admin/User/UserForm.vue'),
+            meta: {
+              rule: 'editor'
+            }
+          },
+          {
             path: 'users/edit/:id',
             name: 'usersEdit',
-            component: () =>import('./views/admin/User/EditForm.vue'),
+            component: () =>import('./views/admin/User/UserForm.vue'),
             meta: {
               rule: 'editor'
             }

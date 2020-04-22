@@ -2,6 +2,7 @@ const User = require('../../model/User');
 const chalk = require('chalk');
 const bcrypt = require("bcrypt");
 exports.getAllUser = (req, res) => {
+    let id = req.params.id;
     User.find({}).then(
         (user) => {
             if(user) {
@@ -92,7 +93,28 @@ exports.getUserById = (req, res) => {
         return res.status(404).json(error);
     })
 }
-
+exports.addUser = async (req, res) => {
+    let checkUser = await User.findOne({ email: req.body.email })
+        if(checkUser) {
+            return res.status(200).json({ message: "This email has already existed" });
+        } else {
+            console.log(chalk.greenBright('____________req body____________',req.body.firstname,req.body.lastname,req.body.email,req.body.role,req.body.password,req.body.location))
+            let userdata = new User();
+            userdata.firstname = req.body.firstname;
+            userdata.lastname = req.body.lastname;
+            userdata.email = req.body.email;
+            userdata.role = req.body.role;
+            userdata.password = '';
+            userdata.locations = req.body.location;
+            await bcrypt.hash(req.body.password, 8).then(
+                res => {
+                    userdata.password = res;
+                }
+            );
+            userdata.save();
+            res.status(201).json({ message: 'Added successfully' });
+        }
+};
 exports.updateUser = async (req, res) => {
     let userID = req.body.userID;
     let firstname = req.body.firstname;
@@ -113,7 +135,7 @@ exports.updateUser = async (req, res) => {
             .then(
                 user => {
                     if(user) {
-                        return res.status(200).json({message: 'Status changed successfully'});
+                        return res.status(200).json({message: 'Updated successfully'});
                     }
                 }
             )
