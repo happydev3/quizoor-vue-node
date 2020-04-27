@@ -6,7 +6,7 @@
       <div slot="header" class="flex flex-wrap-reverse items-center flex-grow justify-between">
 
         <div class="flex flex-wrap-reverse items-center">
-          <vs-button color="danger" type="filled" :style="{marginRight: '10px'}" @click="multipleSubjectDelete"><feather-icon icon="TrashIcon" svgClasses="h-4 w-4" /> {{$t('delete')}}</vs-button>
+          <vs-button color="danger" type="filled" :style="{marginRight: '10px'}" @click="multipleChapterDelete"><feather-icon icon="TrashIcon" svgClasses="h-4 w-4" /> {{$t('delete')}}</vs-button>
           <vs-button color="success" type="filled" @click="newData"><feather-icon icon="PlusIcon" svgClasses="h-4 w-4" /> {{$t('new')}}</vs-button>
         </div>
 
@@ -108,13 +108,13 @@ export default {
       if(status == 'activated') return "success"
       if(status == 'deactivated') return "warning"
     },
-    multipleSubjectDelete() {
+    multipleChapterDelete() {
       let selectedCategory = this.selected;
       var list = [];
       selectedCategory.map(function(value) {
         list.push(value._id);
       });
-      return AdminService.multipleSubjectDelete(list).then(
+      return AdminService.multipleChapterDelete(list).then(
         res => {
           this.$vs.notify({ title:'Deleted Successfully', color:'success', position:'top-right' });
           setTimeout(function(){ window.location.reload() }, 500);

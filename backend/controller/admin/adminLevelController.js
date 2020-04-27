@@ -2,19 +2,34 @@ const Level = require('../../model/Level');
 const User = require('../../model/User');
 const chalk = require('chalk');
 
-exports.getLevel = (req, res) => {
+exports.getLevel = async (req, res) => {
     let id = req.params.id;
-    Level.find({ userID: id}).then((level) => {
-        if(level) {
-            // console.log(chalk.cyan(level))
-            return res.status(200).json(level);
-        } else {
-            return res.status(200).json('');
-        }
-    })
-    .catch(error => {
-        return res.status(400).json(error);
-    });
+    let checkSuperAdmin = await User.findOne({_id: id});
+    if(checkSuperAdmin.role == 'superadmin') {
+        Level.find({}).then((level) => {
+            if(level) {
+                // console.log(chalk.cyan(level))
+                return res.status(200).json(level);
+            } else {
+                return res.status(200).json('');
+            }
+        })
+        .catch(error => {
+            return res.status(400).json(error);
+        });
+    } else if(checkSuperAdmin == 'admin') {
+        Level.find({userID: id}).then((level) => {
+            if(level) {
+                // console.log(chalk.cyan(level))
+                return res.status(200).json(level);
+            } else {
+                return res.status(200).json('');
+            }
+        })
+        .catch(error => {
+            return res.status(400).json(error);
+        });
+    }
 }       
 exports.addLevel = async (req, res) => {
     const name = req.body.name;
@@ -57,7 +72,6 @@ exports.removeLevel = (req, res) => {
 }
 
 exports.changeStatusLevel = (req, res) => {
-    console.log(chalk.cyan('adfasdfasdfasdfasdfasdfasfasdf',JSON.stringify(req.body)));
     const id = req.body.id;
     const status = req.body.status;
     if (status == 'activated') {

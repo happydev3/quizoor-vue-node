@@ -1,6 +1,7 @@
 const User = require('../../model/User');
 const chalk = require('chalk');
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 exports.getAllUser = (req, res) => {
     let id = req.params.id;
     User.find({}).then(
@@ -94,60 +95,39 @@ exports.getUserById = (req, res) => {
     })
 }
 exports.addUser = async (req, res) => {
-    let checkUser = await User.findOne({ email: req.body.email })
-        if(checkUser) {
-            return res.status(200).json({ message: "This email has already existed" });
-        } else {
-            console.log(chalk.greenBright('____________req body____________',req.body.firstname,req.body.lastname,req.body.email,req.body.role,req.body.password,req.body.location))
-            let userdata = new User();
-            userdata.firstname = req.body.firstname;
-            userdata.lastname = req.body.lastname;
-            userdata.email = req.body.email;
-            userdata.role = req.body.role;
-            userdata.password = '';
-            userdata.locations = req.body.location;
-            await bcrypt.hash(req.body.password, 8).then(
-                res => {
-                    userdata.password = res;
-                }
-            );
-            userdata.save();
+    try {
+        const checkUser = await User.findOne({ email: req.body.email });
+        if (!checkUser) {
+            const userdata = new User({
+                firstname: req.body.firstname,
+                lastname: req.body.lastname,
+                email: req.body.email,
+                password: req.body.password,
+                location: req.body.location,
+                role : req.body.role
+            });
+            let user = await userdata.save();
+            const token = await userdata.generateAuthToken(); // here it is calling the method that we created in the model
             res.status(201).json({ message: 'Added successfully' });
+        } else {
+            return res.status(200).json({ message: "This email has already existed" });
         }
+    } catch (err) {
+        res.status(400).json({ err: err });
+    }
 };
 exports.updateUser = async (req, res) => {
-    let userID = req.body.userID;
-    let firstname = req.body.firstname;
-    let lastname = req.body.lastname;
-    let email = req.body.email;
-    let role = req.body.role;
-    let password = '';
-    let status = req.body.status;
-    let location = req.body.location;
-    await bcrypt.hash(req.body.password, 8).then(
-        res => {
-            password = res;
-        }
-    );
-    User.findById(userID).then(
-        (user) => {
-            User.findOneAndUpdate({ _id: userID }, { firstname: firstname, lastname: lastname, email: email, password: password, role: role, status: status, locations: location})
-            .then(
-                user => {
-                    if(user) {
-                        return res.status(200).json({message: 'Updated successfully'});
-                    }
-                }
-            )
-            .catch(
-                error => {
-                    return res.status(400).json({message: error});
-                }
-            )
-        }
-    ).catch(
-        (error) => {
-            return res.status(404).json({error: error});
-        }
-    )
+    let checkUser = await User.findOne({ _id: req.body.userID })
+    if(checkUser) {
+        checkUser.firstname = req.body.firstname;
+        checkUser.lastname = req.body.lastname;
+        checkUser.email = req.body.email;
+        checkUser.role = req.body.role;
+        checkUser.password = req.body.password;
+        checkUser.locations = req.body.location;
+        await checkUser.save();
+        res.status(201).json({ message: 'Updated successfully' });
+    } else {
+        return res.status(201).json({ message: error });
+    }
 }

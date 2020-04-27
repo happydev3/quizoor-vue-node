@@ -29,10 +29,8 @@ exports.registerNewUser = async (req, res) => {
 exports.loginUser = (req, res) => {
     User.findOne({ email: req.body.email }).then((user) => {
         if (user.status == 'activated') {
-            console.log('reareareasrear',user.password, req.body.password);
             bcrypt.compare(req.body.password, user.password)
             .then(val => {
-                console.log('reareareasrear',val);
                 if (val) {
                     user.generateAuthToken();
                     // const token = user.tokens.slice(-1)[0].token;
@@ -55,3 +53,38 @@ exports.getUserDetails = async (req, res) => {
     console.log(chalk.cyan('he is userdata',JSON.stringify(req.userData)));
     await res.json(req.userData);
 };
+
+
+exports.changeName = (req, res) => {
+    console.log(req.body);
+    let id = req.body.id;
+    let firstname = req.body.firstname;
+    let lastname = req.body.lastname;
+    User.findByIdAndUpdate(id, {firstname:firstname, lastname:lastname}).then(
+        user => {
+            console.log(res);
+            return res.status(200).json({message: 'Name changed successfully'});
+        }
+    ).catch(
+        error => {
+            return res.status(400).json({message: error});
+        }
+    )
+}
+
+exports.changePassword = async (req, res) => {
+    let id = req.body.id;
+    let newPassword = req.body.newPassword;
+    let password = await bcrypt.hash(newPassword, 8);
+    console.log(id, password);
+    User.findByIdAndUpdate(id, {password:password}).then(
+        user => {
+            console.log(user);
+            return res.status(200).json({message: 'Password changed successfully'});
+        }
+    ).catch (
+        error => {
+            return res.status(400).json({message: error});
+        }
+    )
+}

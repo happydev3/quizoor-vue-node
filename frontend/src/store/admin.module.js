@@ -6,7 +6,8 @@ import {
   ADDLEVEL,
   GETLEVEL,
   LEVELSELECT,
-  CATEGORYSELECT
+  CATEGORYSELECT,
+  SUBJECTSELECT,
 } from './actionType';
 
 import {
@@ -76,6 +77,15 @@ const actions = {
           return error;
         }
       )
+    } else if(route == 'quizz-all' || route == 'quizz-activated' || route == 'quizz-deactivated' || route == 'quizz-unchecked') {
+      return AdminService.removeQuiz(id).then(
+        res => {
+          return res;
+        },
+        error => {
+          return error;
+        }
+      )
     }
   },
   [CHANGESTATUS](context, rdata) {
@@ -87,7 +97,7 @@ const actions = {
     if(route == 'level') {
       return AdminService.updateStatuslevel(data).then(
         res => {
-          return res
+          return res;
         },
         error => {
           return error;
@@ -96,7 +106,7 @@ const actions = {
     } else if(route == 'users') {
       return AdminService.updateStatusUser(data).then(
         res => {
-          return res
+          return res;
         },
         error => {
           return error;
@@ -105,28 +115,37 @@ const actions = {
     } else if(route == 'categories') {
       return AdminService.updateStatusCategory(data).then(
         res => {
-          return res
+          return res;
         },
         error => {
-          return error
+          return error;
         }
       )
     } else if(route == 'subjects') {
       return AdminService.updateStatusSubject(data).then(
         res => {
-          return res
+          return res;
         },
         error => {
-          return error
+          return error;
         }
       )
     } else if(route == 'chapters') {
       return AdminService.updateStatusChapter(data).then(
         res => {
-          return res
+          return res;
         },
         error => {
-          return error
+          return error;
+        }
+      )
+    } else if(route == 'quizz-all' || route == 'quizz-activated' || route == 'quizz-deactivated' || route == 'quizz-unchecked') {
+      return adminService.updateStatusQuiz(data).then(
+        res => {
+          return res;
+        },
+        error =>{
+          return error;
         }
       )
     }
@@ -179,6 +198,17 @@ const actions = {
         return res;
       }
     ).catch(
+      error => {
+        return error;
+      }
+    )
+  },
+  [SUBJECTSELECT](context, rdata) {
+    console.log('this is subject id ......', rdata);
+    return adminService.getChapterbySelectedSubject(rdata).then(
+      res => {
+        return res;
+      },
       error => {
         return error;
       }

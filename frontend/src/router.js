@@ -27,6 +27,21 @@ const router = new Router({
                     path: 'register',
                     name: 'register',
                     component: () => import('./views/auth/Register.vue')
+                },
+                {
+                    path: 'profile',
+                    name: 'profile',
+                    component: () => import('./views/client/Profile.vue')
+                },
+                {
+                    path: 'track/:id',
+                    name: 'track',
+                    component: () => import('./views/client/Track.vue')
+                },
+                {
+                    path: 'test/:id',
+                    name: 'test',
+                    component: () => import('./views/client/Test.vue')
                 }
             ]
         },
@@ -45,7 +60,7 @@ const router = new Router({
                     { title: 'dashboard', active: true},
                 ],
                 pageTitle: 'Dashboard',
-                rule: 'editor'
+                rule: 'admin'
             }
           },
           {
@@ -58,7 +73,7 @@ const router = new Router({
                     { title: 'level', active: true},
                 ],
                 pageTitle: 'Level',
-                rule: 'editor'
+                rule: 'admin'
             }
           },
           {
@@ -66,7 +81,7 @@ const router = new Router({
             name: 'levelEdit',
             component: () => import('./views/admin/Level/EditForm.vue'),
             meta: {
-                rule: 'editor'
+                rule: 'admin'
             }
           },
           {
@@ -80,7 +95,7 @@ const router = new Router({
                     { title: 'All', active: true},
                 ],
                 pageTitle: 'All-quizz',
-                rule: 'editor'
+                rule: 'admin'
               }
           },
           {
@@ -94,7 +109,7 @@ const router = new Router({
                     { title: 'Activated', active: true},
                 ],
                 pageTitle: 'Activated-quizz',
-                rule: 'editor'
+                rule: 'admin'
               }
           },
           {
@@ -108,7 +123,7 @@ const router = new Router({
                     { title: 'Deactivated', active: true},
                 ],
                 pageTitle: 'Deactivated-quizz',
-                rule: 'editor'
+                rule: 'admin'
               }
           },
           {
@@ -122,8 +137,35 @@ const router = new Router({
                   { title: 'Unchecked', active: true},
               ],
               pageTitle: 'Unchecked-quizz',
-              rule: 'editor'
+              rule: 'admin'
             }
+          },
+          {
+              path: 'quizz/add',
+              name: 'quizz-add',
+              component: () => import('./views/admin/Quizz/QuizzForm.vue'),
+              meta: {
+                pageTitle: 'Add-quizz',
+                rule: 'admin'
+              }
+          },
+          {
+              path: 'quizz/edit/:id',
+              name: 'quizz-edit',
+              component: () => import('./views/admin/Quizz/QuizzForm.vue'),
+              meta: {
+                pageTitle: 'Edit-quizz',
+                rule: 'admin'
+              }
+          },
+          {
+              path: 'quizz/detail/:id',
+              name: 'quizz-edit',
+              component: () => import('./views/admin/Quizz/QuizDetail.vue'),
+              meta: {
+                pageTitle: 'Edit-quizz',
+                rule: 'admin'
+              }
           },
           {
               path: 'category-courses/categories',
@@ -136,7 +178,7 @@ const router = new Router({
                     { title: 'Categories', active: true},
                 ],
                 pageTitle: 'Categories',
-                rule: 'editor'
+                rule: 'admin'
               }
           },
           {
@@ -145,7 +187,7 @@ const router = new Router({
               component: () => import('./views/admin/Category-courses/CategoryForm'),
               meta: {
                 pageTitle: 'addCategories',
-                rule: 'editor'
+                rule: 'admin'
               }
           },
           {
@@ -154,7 +196,7 @@ const router = new Router({
               component: () => import('./views/admin/Category-courses/CategoryForm'),
               meta: {
                 pageTitle: 'editCategories',
-                rule: 'editor'
+                rule: 'admin'
               }
           },
           {
@@ -168,7 +210,7 @@ const router = new Router({
                     { title: 'Subjects', active: true},
                 ],
                 pageTitle: 'Subjects',
-                rule: 'editor'
+                rule: 'admin'
               }
           },
           {
@@ -177,7 +219,7 @@ const router = new Router({
               component: () => import('./views/admin/Category-courses/SubjectForm'),
               meta: {
                 pageTitle: 'addSubjects',
-                rule: 'editor'
+                rule: 'admin'
               }
           },
           {
@@ -186,7 +228,7 @@ const router = new Router({
               component: () => import('./views/admin/Category-courses/SubjectForm'),
               meta: {
                 pageTitle: 'editSubjects',
-                rule: 'editor'
+                rule: 'admin'
               }
           },
           {
@@ -200,7 +242,7 @@ const router = new Router({
                     { title: 'Chapters', active: true},
                 ],
                 pageTitle: 'Chapters',
-                rule: 'editor'
+                rule: 'admin'
               }
           },
           {
@@ -209,7 +251,7 @@ const router = new Router({
               component: () => import('./views/admin/Category-courses/ChapterForm'),
               meta: {
                 pageTitle: 'addChapters',
-                rule: 'editor'
+                rule: 'admin'
               }
           },
           {
@@ -218,7 +260,7 @@ const router = new Router({
               component: () => import('./views/admin/Category-courses/ChapterForm'),
               meta: {
                 pageTitle: 'editChapters',
-                rule: 'editor'
+                rule: 'admin'
               }
           },
           {
@@ -231,7 +273,7 @@ const router = new Router({
                   { title: 'Users', active: true},
               ],
               pageTitle: 'Users',
-              rule: 'editor'
+              rule: 'admin'
             }
           },
           {
@@ -239,7 +281,7 @@ const router = new Router({
             name: 'usersAdd',
             component: () =>import('./views/admin/User/UserForm.vue'),
             meta: {
-              rule: 'editor'
+              rule: 'admin'
             }
           },
           {
@@ -247,8 +289,16 @@ const router = new Router({
             name: 'usersEdit',
             component: () =>import('./views/admin/User/UserForm.vue'),
             meta: {
-              rule: 'editor'
+              rule: 'admin'
             }
+          },
+          {
+              path: 'profile',
+              name: 'AdminProfile',
+              component: () => import('./views/admin/Profile.vue'),
+              meta: {
+                rule: 'admin'
+              }
           }
         ],
         },
@@ -274,7 +324,7 @@ const router = new Router({
                     { title: 'All', active: true},
                 ],
                 pageTitle: 'All-quizz',
-                rule: 'editor'
+                rule: 'author'
               }
             },
             {
@@ -288,7 +338,7 @@ const router = new Router({
                       { title: 'Activated', active: true},
                   ],
                   pageTitle: 'Activated-quizz',
-                  rule: 'editor'
+                  rule: 'author'
                 }
             },
             {
@@ -302,7 +352,7 @@ const router = new Router({
                       { title: 'Deactivated', active: true},
                   ],
                   pageTitle: 'Deactivated-quizz',
-                  rule: 'editor'
+                  rule: 'author'
                 }
             },
             {
@@ -316,7 +366,7 @@ const router = new Router({
                     { title: 'Unchecked', active: true},
                 ],
                 pageTitle: 'Unchecked-quizz',
-                rule: 'editor'
+                rule: 'author'
               }
             },
           ]

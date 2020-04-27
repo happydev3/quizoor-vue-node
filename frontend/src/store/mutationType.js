@@ -25,3 +25,9 @@ export const SUCCESSADDLEVEL = "successaddlevel";
 export const GETLEVELSUCCESS = "getlevelsuccess";
 
 
+export const GETSUBJECTITEMSSUCCESS = "getsubjectitemsuccess"
+export const GETLEVELITEMSSUCCESS = "getlevelitemsusccess"
+export const GETTRACKITEMSSUCCESS = "gettrackitemsuccess"
+export const UPDATEQUIZITEMSUCCESS = "updatequizitemsuccess"
+export const GETESTITEMSUCCESS = "getestitemsuccess"
+

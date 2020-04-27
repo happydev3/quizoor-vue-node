@@ -12,6 +12,12 @@
         <vs-dropdown-item @click="removeData()">
           Delete
         </vs-dropdown-item>
+        <vs-dropdown-item @click="moveDetail()" v-if="this.route == 'quizz-all' || this.route == 'quizz-activated' || this.route == 'quizz-deactivated' || this.route == 'quizz-unchecked'">
+          Detail
+        </vs-dropdown-item>
+        <!-- <vs-dropdown-item @click="CheckVerfication()" v-if="this.route == 'quizz-all' || this.route == 'quizz-activated' || this.route == 'quizz-deactivated' || this.route == 'quizz-unchecked'">
+          Check
+        </vs-dropdown-item> -->
       </vs-dropdown-menu>
     </vs-dropdown>
   </div>
@@ -34,20 +40,26 @@ export default {
       type: String
     }
   },
+  computed: {
+    route() {
+      return this.$router.currentRoute.name;
+    }
+  },
   methods: {
     updateData() {
       let id = this.ID;
-      let route = this.$router.currentRoute.name;
-      if (route == 'level') {
+      if (this.route == 'level') {
         this.$router.push('level/edit/' + id);
-      } else if(route == 'users') {
+      } else if(this.route == 'users') {
         this.$router.push('users/edit/' + id);
-      } else if(route == 'categories') {
+      } else if(this.route == 'categories') {
         this.$router.push('categories/edit/' + id);
-      } else if(route == 'subjects') {
+      } else if(this.route == 'subjects') {
         this.$router.push('subjects/edit/' + id);
-      } else if(route == 'chapters') {
+      } else if(this.route == 'chapters') {
         this.$router.push('chapters/edit/' + id);
+      } else if(this.route == 'quizz-all' || this.route == 'quizz-activated' || this.route == 'quizz-deactivated' || this.route == 'quizz-unchecked' ) {
+        this.$router.push('edit/' + id);
       }
     },
     changeStatus() {
@@ -82,6 +94,10 @@ export default {
           console.log(error);
         }
       )
+    },
+    moveDetail() {
+      let id = this.ID;
+      this.$router.push('detail/' + id);
     }
   }
 }

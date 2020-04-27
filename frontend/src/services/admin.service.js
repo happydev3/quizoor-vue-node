@@ -405,7 +405,8 @@ class AdminService {
       levelID: rdata.levelID,
       categoryID: rdata.categoryID,
       subjectID: rdata.subjectID,
-      userID: rdata.userID
+      userID: rdata.userID,
+      content: rdata.content
     }, { headers: authHeader() }).then(
       res => {
         return res;
@@ -449,6 +450,208 @@ class AdminService {
     }, { headers: authHeader() })
     .then(
       res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  multipleChapterDelete(list) {
+    return axios.post(API_URL + "multipleChapterDelete", {list: list}, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  getChapterById(id) {
+    return axios.get(API_URL + 'getChapterById/' + id, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  editChapter(rdata) {
+    return axios.post(API_URL + 'editChapter', {
+      chapterID: rdata.chapterID,
+      name: rdata.name,
+      levelID: rdata.levelID,
+      userID: rdata.userID,
+      categoryID: rdata.categoryID,
+      subjectID: rdata.subjectID,
+      content: rdata.content
+    }, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+
+  //quiz
+  getChapterbySelectedSubject(rdata) {
+    return axios.get(API_URL + 'getChapterbySelectedSubject/' + rdata, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  addQuiz(rdata) {
+    console.log(rdata);
+    return axios.post(API_URL + 'addQuiz', {
+      user: rdata.user,
+      level : rdata.level,
+      category : rdata.category,
+      subject : rdata.subject,
+      chapter : rdata.chapter,
+      name : rdata.name,
+      difficulty : rdata.difficulty,
+      questions : rdata.questions
+    }, { headers: authHeader() }).then(
+      res => {
+        console.log(res)
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  }
+  getQuiz(rdata) {
+    let id = rdata;
+    return axios.get(API_URL + 'getQuiz/' + id, { headers: authHeader() }).then(
+      res => {
+        return res;
+      }
+    ).catch (error => {
+      return error;
+    })
+  }
+  getQuizDeactivated(rdata) {
+    let id = rdata;
+    return axios.get(API_URL + 'getQuizDeactivated/' + id, { headers: authHeader() }).then(
+      res => {
+        return res;
+      }
+    ).catch (error => {
+      return error;
+    })
+  }
+  getQuizActivated(rdata) {
+    let id = rdata;
+    return axios.get(API_URL + 'getQuizActivated/' + id, { headers: authHeader() }).then(
+      res => {
+        return res;
+      }
+    ).catch (error => {
+      return error;
+    })
+  }
+
+  getQuizUnchecked(rdata) {
+    let id = rdata;
+    return axios.get(API_URL + 'getQuizUnchecked/' + id, { headers: authHeader() }).then(
+      res => {
+        return res;
+      }
+    ).catch (error => {
+      return error;
+    })
+  }
+  updateStatusQuiz(data) {
+    console.log(data);
+    return axios.post(API_URL + 'updateStatusQuiz', {
+      id: data.id,
+      status: data.status
+    }, { headers: authHeader() })
+    .then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  multipleQuizDelete(list) {
+    return axios.post(API_URL + "multipleQuizDelete", {list: list}, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  removeQuiz(id) {
+    return axios.post(API_URL + 'removeQuiz', {
+      id: id
+    }, { headers: authHeader() })
+    .then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  getQuizById(id) {
+    return axios.get(API_URL + 'getQuizById/' + id, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+  checkVerify(id) {
+    return axios.get(API_URL + 'checkVerify/' + id, { headers :authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+
+  //profile
+
+  changeName(rdata) {
+    return axios.post(API_URL + 'changeName', {
+      id : rdata.id,
+      firstname: rdata.firstname,
+      lastname: rdata.lastname
+    }, { headers: authHeader() }).then(
+      res => {
+        console.log(res);
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+
+  changePassword(rdata) {
+    return axios.post(API_URL + 'changePassword', {
+      id :rdata.id,
+      newPassword: rdata.newPassword
+    }, { headers: authHeader() }).then(
+      res => {
+        console.log(res);
         return res;
       },
       error => {

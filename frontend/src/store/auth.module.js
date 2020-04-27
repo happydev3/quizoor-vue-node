@@ -10,7 +10,7 @@ import {
   LOGINFAILURE,
   LOGOUTSUCCCESS,
   SUCCESSREGISTER,
-  REGISTERFAILURE
+  REGISTERFAILURE,
 } from './mutationType';
 
 const user = JSON.parse(localStorage.getItem('user'));
@@ -84,7 +84,7 @@ const mutations = {
 
 const getters = {
   permission(state) {
-    return state.initialState.user.user.role;
+    return state && state.initialState.user.user.role;
   }
 }
 

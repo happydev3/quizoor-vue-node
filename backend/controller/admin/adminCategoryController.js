@@ -3,16 +3,25 @@ const User = require('../../model/User');
 const Category = require('../../model/Catetory');
 const chalk = require('chalk');
 
-exports.getCategory = (req, res) => {
+exports.getCategory = async (req, res) => {
     let id = req.params.id;
-    console.log(chalk.greenBright('_______________res params id__________________________res______category______________________',id));
-    Category.find({ user: id }).populate('level').then((category) => {
-        console.log('+++++++++++++++_____________________res______category_______________++++++++++++++++', chalk.cyan(category))
-        return res.status(200).json(category);
-    })
-    .catch(error => {
-        return res.status(400).json(error);
-    });
+    let checkSuperAdmin = await User.findOne({_id: id});
+    console.log(checkSuperAdmin.role);
+    if(checkSuperAdmin.role == 'superadmin') {
+        Category.find({ }).populate('level').then((category) => {
+            return res.status(200).json(category);
+        })
+        .catch(error => {
+            return res.status(400).json(error);
+        });
+    } else if(checkSuperAdmin.role == 'admin') {
+        Category.find({ user: id }).populate('level').then((category) => {
+            return res.status(200).json(category);
+        })
+        .catch(error => {
+            return res.status(400).json(error);
+        });
+    }
 }       
 exports.addCategory = (req, res) => {
     const name = req.body.name;

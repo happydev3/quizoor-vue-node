@@ -31,6 +31,9 @@
           </vs-select>
           <span class="text-danger text-sm"  v-show="errors.has('subject')">{{ errors.first('subject') }}</span>
         </div>
+        <div class="vx-col  w-full mb-2">
+          <quill-editor v-model="content"></quill-editor>
+        </div>
       </div>
       <div class="vx-row" :style="{marginTop: '10px'}">
         <div class="vx-col w-full">
@@ -43,6 +46,10 @@
 <script>
 import { mapState } from 'vuex';
 import AdminService from '@/services/admin.service.js';
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+import { quillEditor } from 'vue-quill-editor'
 import { GETLEVEL, LEVELSELECT, CATEGORYSELECT } from '@/store/actionType';
 export default {
   data() {
@@ -54,7 +61,8 @@ export default {
       categories: [],
       subjectID: '',
       subjects: [],
-      subject: ''
+      subject: '',
+      content: `chapter summary`
     }
   },
   computed: {
@@ -65,25 +73,30 @@ export default {
       return this.$router.currentRoute.name
     }
   },
+  components: {
+    quillEditor
+  },
   methods: {
     submitForm() {
       this.$validator.validateAll().then(result => {
         if (result) {
           if (this.routename == 'editChapters') {
             let rdata = {
-              subjectID: this.subjectID,
+              chapterID: this.chapterID,
               name: this.name,
               levelID: this.level,
               userID: this.user,
-              categoryID: this.category
+              categoryID: this.category,
+              subjectID: this.subject,
+              content: this.content
             }
             console.log('+++++++++++editChapters+++++++++',rdata);
-              return AdminService.editSubject(rdata).then(
+              return AdminService.editChapter(rdata).then(
                 res => {
                   console.log(res);
                   if(res.data.message == 'successfully updated') {
                     this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
-                    setTimeout(() => { this.$router.push('/admin/category-courses/subjects') }, 500);
+                    setTimeout(() => { this.$router.push('/admin/category-courses/chapters') }, 500);
                   } else if (res.data.message == 'This Chapter has already existed!') {
                     this.$vs.notify({ title: res.data.message, color:'warning', position:'top-right' });
                   }
@@ -95,7 +108,8 @@ export default {
                 levelID: this.level,
                 userID: this.user,
                 categoryID: this.category,
-                subjectID: this.subject
+                subjectID: this.subject,
+                content: this.content
               }
               console.log('+_+++++++++++addChapters+++++++',rdata);
               return AdminService.addChapter(rdata).then(
@@ -161,7 +175,8 @@ export default {
           this.status = res.data.status;
           this.level = res.data.level;
           this.category = res.data.category;
-          // this.subject = res.data.subject;
+          this.subject = res.data.subject;
+          // this.content = res.data.content;
           console.log(res);
         },
         error => {

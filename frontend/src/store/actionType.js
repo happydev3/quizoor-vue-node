@@ -18,17 +18,17 @@ export const LOGOUT = "logout"
 ///common
 export const REMOVEDATA = "removedata"
 export const CHANGESTATUS = "changestatus"
+export const LEVELSELECT = "levelselect"
+export const CATEGORYSELECT = 'categoryselect'
+export const SUBJECTSELECT = 'subjectselect'
 
 
 ///level
 export const ADDLEVEL = "addlevel"
 export const GETLEVEL = "getlevel"
 
-//subject
-
-export const LEVELSELECT = "levelselect"
-
-
-//chapter
-
-export const CATEGORYSELECT = 'categoryselect'
+export const GETSUBJECTITEMS = "getsubjectitems"
+export const GETLEVLEITEMS = "getlevelitems"
+export const GETTRACKITEMS = "gettrackitems"
+export const UPDATEQUIZITEM = "updatequizitem"
+export const GETESTITEM = "getestitem"

@@ -9,23 +9,30 @@ exports.getCategorybySelectedLevel = (req, res) => {
     let levelID = req.params.id;
     console.log('requires levelID', levelID)
     Category.find({ level: levelID, status: 'activated' }).populate('level').then((category) => {
-        console.log('+++++++++++++++_____________________res______category_______________++++++++++++++++', chalk.cyan(category))
         return res.status(200).json(category);
     })
     .catch(error => {
         return res.status(400).json(error);
     });
 }
-exports.getSubject = (req, res) => {
+exports.getSubject = async (req, res) => {
     let id = req.params.id;
-    console.log(chalk.greenBright('_______________res params id__________________________res______category______________________',id));
-    Subject.find({ user: id }).populate('level').populate('category').then((subject) => {
-        console.log('+++++++++++++++_____________________res______category_______________++++++++++++++++', chalk.cyan(subject))
-        return res.status(200).json(subject);
-    })
-    .catch(error => {
-        return res.status(400).json(error);
-    });
+    let checkSuperAdmin = await User.findOne({_id: id});
+    if(checkSuperAdmin.role == 'superadmin') {
+        Subject.find({ }).populate('level').populate('category').then((subject) => {
+            return res.status(200).json(subject);
+        })
+        .catch(error => {
+            return res.status(400).json(error);
+        });
+    } else if(checkSuperAdmin == 'admin') {
+        Subject.find({ user: id }).populate('level').populate('category').then((subject) => {
+            return res.status(200).json(subject);
+        })
+        .catch(error => {
+            return res.status(400).json(error);
+        });
+    }
 }       
 exports.addSubject = (req, res) => {
     console.log(req.body)

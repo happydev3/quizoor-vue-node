@@ -6,6 +6,8 @@ const adminUserController = require("../controller/admin/adminUserController");
 const adminCategoryController = require("../controller/admin/adminCategoryController");
 const adminSubjectController = require("../controller/admin/adminSubjectController");
 const adminChapterController = require("../controller/admin/adminChapterController");
+const adminQuizController = require("../controller/admin/adminQuizController");
+const homeController = require("../controller/client/homeController");
 const auth = require('../config/auth');
 
 router.post("/register", userController.registerNewUser);
@@ -51,4 +53,32 @@ router.post('/addChapter', auth, adminChapterController.addChapter);
 router.get('/getChapter/:id', auth, adminChapterController.getChapter);
 router.post('/updateStatusChapter', auth, adminChapterController.updateStatusChapter);
 router.post('/removeChapter', auth, adminChapterController.removeChapter);
+router.post('/multipleChapterDelete', auth, adminChapterController.multipleChapterDelete);
+router.get('/getChapterById/:id', auth, adminChapterController.getChapterById);
+router.post('/editChapter', auth, adminChapterController.editChapter);
+
+router.get('/getChapterbySelectedSubject/:id', auth ,adminQuizController.getChapterbySelectedSubject);
+router.post('/addQuiz', auth, adminQuizController.addQuiz);
+router.get('/getQuiz/:id', auth, adminQuizController.getQuiz);
+router.get('/getQuizActivated/:id', auth, adminQuizController.getQuizActivated);
+router.get('/getQuizDeactivated/:id', auth, adminQuizController.getQuizDeactivated);
+router.get('/getQuizUnchecked/:id', auth, adminQuizController.getQuizUnchecked);
+router.post('/updateStatusQuiz', auth, adminQuizController.updateStatusQuiz);
+router.post('/removeQuiz', auth, adminQuizController.removeQuiz);
+router.post('/multipleQuizDelete', auth, adminQuizController.multipleQuizDelete);
+router.get('/getQuizById/:id', auth, adminQuizController.getQuizById);
+router.get('/checkVerify/:id', auth, adminQuizController.checkVerify);
+
+router.post('/changeName', auth, userController.changeName);
+router.post('/changePassword', auth, userController.changePassword);
+
+router.get('/getSearchValue/:id', homeController.getSearchValue);
+router.get('/getSearchCategory/:id', homeController.getSearchCategory);
+router.get('/getSearchSubject/:id', homeController.getSearchSubject);
+router.get('/getSubjects/:id', homeController.getSubjects);
+router.get('/getSearchTrakItems/:id', auth, homeController.getSearchTrakItems);
+router.get('/updateQuizItem/:id', auth, homeController.updateQuizItem);
+router.get('/getTestItem/:id', auth, homeController.getTestItem);
+
+
 module.exports = router;

@@ -29,6 +29,10 @@ const ChapterSchema = Schema({
         required: true,
         ref: 'Subject'
     },
+    content : {
+        type: Object,
+        required: false
+    },
     create_date: { type:Date, default:Date.now }
 });
 

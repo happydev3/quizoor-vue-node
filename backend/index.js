@@ -20,8 +20,8 @@ mongoose
 //registering cors
 app.use(cors());
 //configure body parser
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.json({ limit: '50mb', extended: true }));
 //configure body-parser ends here
 app.use(morgan("dev")); // configire morgan
 // define first route

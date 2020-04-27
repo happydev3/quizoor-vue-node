@@ -6,6 +6,8 @@ import createLogger from 'vuex/dist/logger';
 import layout from './layout.module'
 import auth from './auth.module'
 import admin from './admin.module'
+import client from './client.module'
+import i18n from './i18n.module'
 
 Vue.use(Vuex)
 
@@ -16,7 +18,9 @@ export default new Vuex.Store({
     modules: {
       layout,
       auth,
-      admin
+      admin,
+      client,
+      i18n
     },
     strict: debug,
     plugins

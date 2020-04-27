@@ -7,12 +7,13 @@ import App from './App.vue'
 // Vuesax Component Framework
 import Vuesax from 'vuesax'
 import VeeValidate, { Validator } from 'vee-validate';
+// import Dropdown from 'bp-vuejs-dropdown';
 import 'material-icons/iconfont/material-icons.css' //Material Icons
 import 'vuesax/dist/vuesax.css'; // Vuesax
 Vue.use(Vuesax)
 Vue.use(VeeValidate)
 Vue.use({ Validator })
-
+// Vue.use(Dropdown)
 
 // Theme Configurations
 import '../themeConfig.js'
@@ -63,7 +64,7 @@ require('./assets/css/iconfont.css')
 Vue.config.productionTip = false;
 
 new Vue({
-    router,
+    router: router,
     store,
     i18n,
     render: h => h(App)

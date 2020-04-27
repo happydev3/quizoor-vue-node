@@ -4,57 +4,88 @@
       <header class="lp-subjects__header">
         <h2 class="lp-subjects__title">{{$t('curriculum')}}</h2>
       </header>
-      <div class="lp-subjects__inner">
-        <ul class="lp-subjects__list">
-          <li class="lp-subjects__item" :style="{textAlign: 'start'}">
-            <ul>
-              <li class="subItem">
-                <a href="/subject/5e2f67c3a486240017bb2b65">Algebra</a>
-              </li>
-              <li class="subItem">
-                <a href="/subject/5e2f6811a486240017bb2b69">Calculus</a>
-              </li>
-              <li class="subItem">
-                <a href="/subject/5e2f67ffa486240017bb2b68">Geometry</a>
-              </li>
-              <li class="subItem">
-                <a href="/subject/5d6c6866b623c3001704fc2e">Infectious diseases</a>
-              </li>
-            </ul>
-          </li>
-          <li class="lp-subjects__item" :style="{textAlign: 'center'}">
-            <ul>
-              <li class="subItem">
-                <a href="/subject/5d6c678cb623c3001704fc29">Neurological and Psychiatric disorders</a>
-              </li>
-              <li class="subItem">
-                <a href="/subject/5e2f67efa486240017bb2b67">Precalculus</a>
-              </li>
-              <li class="subItem">
-                <a href="/subject/5e2f67d7a486240017bb2b66">Statistics</a>
-              </li>
-              <li class="subItem">
-                <a href="/subject/5d644665bbee830017617d5b">SubjectTest2</a>
-              </li>
-            </ul>
-          </li>
-          <li class="lp-subjects__item" :style="{textAlign: 'end'}">
-            <ul>
-              <li class="subItem">
-                <a href="/subject/5e2f682aa486240017bb2b6a">Trigonometry</a>
-              </li>
-              <li class="subItem">
-                <a href="/subject/5d6047b36bf5c00017955671">subjectTest</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
+      <div class="carousel-example">
+          <swiper :options="swiperOption">
+              <swiper-slide v-for="(subjectItem, index) in subjectItems" :key="index">
+                  <div>
+                    <h4 class="subjectItem-header">{{subjectItem.name}}</h4>
+                    <vs-button class="subjectItemButton" color="primary" type="filled">Start</vs-button>
+                  </div>
+              </swiper-slide>
+              <div class="swiper-pagination" slot="pagination"></div>
+          </swiper>
       </div>
     </div>
   </section>
 </template>
 <script>
+// import ClientService from '@/services/client.service.js';
+import 'swiper/dist/css/swiper.min.css'
+import { swiper, swiperSlide } from 'vue-awesome-swiper'
+import { mapState} from 'vuex';
 export default {
-  // name: 'the-subjects',
-};
+    data() {
+        return {
+            SubjectItems:[],
+            swiperOption: {
+                slidesPerView: 4,
+                slidesPerColumn: 2,
+                spaceBetween: 30,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true
+                },
+                breakpoints: {
+                    1024: {
+                        slidesPerView: 4,
+                        spaceBetween: 40
+                    },
+                    768: {
+                        slidesPerView: 3,
+                        spaceBetween: 30
+                    },
+                    640: {
+                        slidesPerView: 2,
+                        spaceBetween: 20
+                    }
+                }
+            }
+        }
+    },
+    computed: {
+      ...mapState({
+        subjectItems: state => state.client.subjectItems
+      })
+    },
+    components: {
+        swiper,
+        swiperSlide
+    }
+}
 </script>
+
+<style lang="scss">
+.carousel-example .swiper-container .swiper-slide {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;   
+    // background-color: #eee;
+    background-image: url('../../../assets/images/pages/subjectItem.jpg');
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    min-height: 200px;
+}
+.subjectItem-header {
+    font-weight: 600;
+}
+.subjectItemButton {
+    margin-top: 10px;
+}
+</style>
