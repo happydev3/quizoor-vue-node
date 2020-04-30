@@ -21,7 +21,7 @@
         </div>
         <div class="vx-col  w-full mb-2">
           <vs-select v-validate="'required'" v-model="category" name="category" autocomplete label="Category" class="w-full">
-            <vs-select-item :key="index" :value="item._id" :text="item.name" v-for="(item,index) in categories" />
+            <vs-select-item :key="index" :value="item._id" :text="item.name" v-for="(item,index) in categories"/>
           </vs-select>
           <span class="text-danger text-sm"  v-show="errors.has('category')">{{ errors.first('category') }}</span>
         </div>
@@ -69,10 +69,8 @@ export default {
               userID: this.user,
               categoryID: this.category
             }
-            console.log('+++++++++++editCategories+++++++++',rdata);
               return AdminService.editSubject(rdata).then(
                 res => {
-                  console.log(res);
                   if(res.data.message == 'successfully updated') {
                     this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
                     setTimeout(() => { this.$router.push('/admin/category-courses/subjects') }, 500);
@@ -88,7 +86,6 @@ export default {
                 userID: this.user,
                 categoryID: this.category
               }
-              console.log('+_+++++++++++addCategories+++++++',rdata);
               return AdminService.addSubject(rdata).then(
                 res => {
                   if(res.data.message == 'Successfully Added') {
@@ -106,8 +103,6 @@ export default {
     onChange() {
       this.$store.dispatch(LEVELSELECT, this.level).then(
         res => {
-          console.log(res.data)
-          this.category = ''
           return this.categories = res.data;
         }
       )
@@ -134,7 +129,6 @@ export default {
     )
     if (this.routename == 'editSubjects') {
       const id = this.$router.currentRoute.params.id;
-      console.log(id);
       return AdminService.getSubjectById(id).then(
         res => {
           this.subjectID = res.data._id
@@ -142,7 +136,6 @@ export default {
           this.status = res.data.status;
           this.level = res.data.level;
           this.category = res.data.category;
-          console.log(res);
         },
         error => {
           console.log(error)

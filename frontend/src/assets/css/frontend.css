@@ -26,6 +26,7 @@
 }
 .titleImg {
     width: 150px;
+    /* height: 70px; */
 }
 
 .lp-hero__image {
@@ -1844,9 +1845,13 @@ TRACK
 
 /* line 46, src/sass/pages/_quiz.scss */
 .quiz__inner-header {
-  font-size: 32px;
+  font-size: 25px;
   font-weight: 500;
   margin-bottom: 40px;
+}
+
+.quiz__inner-header p img {
+  width: 300px;
 }
 
 /* line 51, src/sass/pages/_quiz.scss */

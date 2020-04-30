@@ -92,7 +92,6 @@ export default {
           this.email = res.data.email;
           this.role = res.data.role;
           this.status = res.data.status;
-          console.log(res);
         },
         error => {
           console.log(error)
@@ -133,7 +132,6 @@ export default {
                     this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
                     setTimeout(() => { this.$router.history.push('/admin/users') }, 500);
                 }
-                console.log(res);
               },
               error => {
                 return error;
@@ -160,14 +158,12 @@ export default {
                 }
             }
             rdata.location = templocation;
-            console.log(rdata);
             return AdminService.addUser(rdata).then(
               res => {
                 if(res.data.message == 'Added successfully') {
                     this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
                     setTimeout(() => { this.$router.history.push('/admin/users') }, 500);
                 }
-                console.log(res);
               },
               error => {
                 return error;

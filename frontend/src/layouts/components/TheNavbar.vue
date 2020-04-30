@@ -107,7 +107,6 @@ export default {
         },
     },
     data() {
-      console.log(this.$store);
         return {
             navbarSearchAndPinList: this.$store.state.layout.navbarSearchAndPinList,
             searchQuery: '',

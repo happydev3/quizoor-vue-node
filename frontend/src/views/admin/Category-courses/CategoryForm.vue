@@ -46,7 +46,6 @@ export default {
       user: state => state.admin.user.user._id
     }),
     routename() {
-      console.log('++++____+++++', this.$router.currentRoute.name)
       return this.$router.currentRoute.name
     }
   },
@@ -60,7 +59,6 @@ export default {
               level: this.level,
               name: this.name
             }
-            console.log('+_++++++++++++++++++',rdata);
               return AdminService.editCategory(rdata).then(
                 res => {
                   if (res.data.message == 'successfully updated') {
@@ -77,7 +75,6 @@ export default {
                 levelID: this.level,
                 userID: this.user
               }
-              console.log('+_++++++++++++++++++',rdata);
               return AdminService.addCategory(rdata).then(
                 res => {
                   if(res.data.message == 'Successfully Added') {
@@ -120,7 +117,6 @@ export default {
           this.name = res.data.name;
           this.status = res.data.status;
           this.level = res.data.level;
-          console.log(res);
         },
         error => {
           console.log(error)

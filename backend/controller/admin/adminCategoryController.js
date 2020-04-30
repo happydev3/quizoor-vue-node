@@ -1,27 +1,31 @@
 const Level = require('../../model/Level');
 const User = require('../../model/User');
+const Subject = require('../../model/Subject')
 const Category = require('../../model/Catetory');
+const Chapter = require('../../model/Chapter');
+const Quiz = require('../../model/Quiz');
 const chalk = require('chalk');
 
 exports.getCategory = async (req, res) => {
     let id = req.params.id;
     let checkSuperAdmin = await User.findOne({_id: id});
-    console.log(checkSuperAdmin.role);
-    if(checkSuperAdmin.role == 'superadmin') {
-        Category.find({ }).populate('level').then((category) => {
-            return res.status(200).json(category);
-        })
-        .catch(error => {
-            return res.status(400).json(error);
-        });
-    } else if(checkSuperAdmin.role == 'admin') {
-        Category.find({ user: id }).populate('level').then((category) => {
-            return res.status(200).json(category);
-        })
-        .catch(error => {
-            return res.status(400).json(error);
-        });
-    }
+    let tempLocale = [];
+    checkSuperAdmin.locations.map(function(location){
+        tempLocale.push(location.value);
+    });
+    let locale = tempLocale;
+    let levels = await Level.find({location: {$in: locale}});
+    let tempLevelIds = [];
+    levels.map(function(level){
+        tempLevelIds.push(level._id);
+    });
+    let levelIds = tempLevelIds;
+    Category.find({level: {$in: levelIds}}).populate('level').then((category) => {
+        return res.status(200).json(category);
+    })
+    .catch(error => {
+        return res.status(400).json(error);
+    });
 }       
 exports.addCategory = (req, res) => {
     const name = req.body.name;
@@ -46,20 +50,17 @@ exports.addCategory = (req, res) => {
     })
 }
 
-exports.removeCategory = (req, res) => {
-    const id = req.body.id;
-    Category.deleteOne({ _id: id}).then(
-        res => {
-            return res.status(200).json({message: 'The Item successfully deleted'})
-        },
-        err => {
-            return res.status(400).json({message: err})
-        }
-    ).catch(
-        error => {
-            return res.status(400).json({message: error})
-        }
-    )
+exports.removeCategory = async (req, res) => {
+    try {
+        const id = req.body.id;
+        await Category.deleteOne({_id: id});
+        await Subject.deleteMany({category: id});
+        await Chapter.deleteMany({category: id});
+        await Quiz.deleteMany({category: id});
+        return res.status(200).json({message: 'The Item successfully deleted'});
+    } catch(error) {
+        return res.status(400).json({message: error});
+    }
 }
 
 exports.changeStatusCatetory = (req, res) => {
@@ -134,15 +135,16 @@ exports.editCategory = async (req, res) => {
         return res.status(201).json({message: 'This category has already existed!'})
     }
 }
-exports.multipleCategoryDelete = (req, res) => {
-    let list = req.body.list;
-    console.log(chalk.cyan(list))
-    Category.deleteMany({_id: {$in: list }},
-        function(err, result) {
-            if (err) {
-                res.send(err);
-            } else {
-                res.send(result);
-            }
-        })
+
+exports.multipleCategoryDelete = async (req, res) => {
+    try {
+        let list = req.body.list;
+        await Category.deleteMany({_id: {$in: list }});
+        await Subject.deleteMany({category: {$in: list }});
+        await Chapter.deleteMany({category: {$in: list }});
+        await Quiz.deleteMany({category: {$in: list }});
+        return res.status(200).json({message: 'Items successfully deleted'});
+    } catch (error){
+        return res.status(400).json({message: error});
+    }
 }

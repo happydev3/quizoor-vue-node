@@ -2,12 +2,13 @@ const Level = require('../../model/Level');
 const User = require('../../model/User');
 const Subject = require('../../model/Subject')
 const Category = require('../../model/Catetory');
+const Chapter = require('../../model/Chapter');
+const Quiz = require('../../model/Quiz');
 const chalk = require('chalk');
 
 
 exports.getCategorybySelectedLevel = (req, res) => {
     let levelID = req.params.id;
-    console.log('requires levelID', levelID)
     Category.find({ level: levelID, status: 'activated' }).populate('level').then((category) => {
         return res.status(200).json(category);
     })
@@ -15,25 +16,29 @@ exports.getCategorybySelectedLevel = (req, res) => {
         return res.status(400).json(error);
     });
 }
+
 exports.getSubject = async (req, res) => {
     let id = req.params.id;
     let checkSuperAdmin = await User.findOne({_id: id});
-    if(checkSuperAdmin.role == 'superadmin') {
-        Subject.find({ }).populate('level').populate('category').then((subject) => {
-            return res.status(200).json(subject);
-        })
-        .catch(error => {
-            return res.status(400).json(error);
-        });
-    } else if(checkSuperAdmin == 'admin') {
-        Subject.find({ user: id }).populate('level').populate('category').then((subject) => {
-            return res.status(200).json(subject);
-        })
-        .catch(error => {
-            return res.status(400).json(error);
-        });
-    }
-}       
+    let tempLocale = [];
+    checkSuperAdmin.locations.map(function(location){
+        tempLocale.push(location.value);
+    });
+    let locale = tempLocale;
+    let levels = await Level.find({location: {$in: locale}});
+    let tempLevelIds = [];
+    levels.map(function(level){
+        tempLevelIds.push(level._id);
+    });
+    let levelIds = tempLevelIds;
+    Subject.find({level: {$in: levelIds}}).populate('level').populate('category').then((subject) => {
+        return res.status(200).json(subject);
+    })
+    .catch(error => {
+        return res.status(400).json(error);
+    });
+}   
+
 exports.addSubject = (req, res) => {
     console.log(req.body)
     const name = req.body.name;
@@ -60,24 +65,19 @@ exports.addSubject = (req, res) => {
     })
 }
 
-exports.removeSubject = (req, res) => {
-    const id = req.body.id;
-    Subject.deleteOne({ _id: id}).then(
-        res => {
-            return res.status(200).json({message: 'The Item successfully deleted'})
-        },
-        err => {
-            return res.status(400).json({message: err})
-        }
-    ).catch(
-        error => {
-            return res.status(400).json({message: error})
-        }
-    )
+exports.removeSubject = async (req, res) => {
+    try {
+        const id = req.body.id;
+        await Subject.deleteOne({_id: id});
+        await Chapter.deleteMany({subject: id});
+        await Quiz.deleteMany({subject: id});
+        return res.status(200).json({message: 'The Item successfully deleted'});
+    } catch(error) {
+        return res.status(400).json({message: error});
+    }
 }
 
 exports.updateStatusSubject = (req, res) => {
-    console.log(chalk.cyan('++++++updatestatussubject++++',JSON.stringify(req.body)));
     const id = req.body.id;
     const status = req.body.status;
     if (status == 'activated') {
@@ -109,25 +109,19 @@ exports.updateStatusSubject = (req, res) => {
     }
     
 }
-exports.getSubjectById = (req, res) => {
-    const id = req.params.id;
-    Subject.findOne({_id: id}).then(
-        subject => {
-            if(subject) {
-                console.log(chalk.cyan(subject))
-                return res.status(200).json(subject);
-            } else {
-                return res.status(200).json('');
-            }
-        },
-        error => {
-            return res.status(201).json({message: error})
+exports.getSubjectById = async (req, res) => {
+    try {
+        const id = req.params.id;
+        let subject = await Subject.findOne({_id: id});
+        if(subject) {
+            console.log(subject);
+            return res.status(200).json(subject);
+        } else {
+            return res.status(404).json({message: 'Item does not exist'});
         }
-    ).catch(
-        error => {
-            return res.status(201).json({message: error})
-        }
-    )
+    } catch (error) {
+        return res.status(400).json(error);
+    }
 }
 exports.editSubject = async (req, res) => {
     console.log(req.body);
@@ -152,15 +146,15 @@ exports.editSubject = async (req, res) => {
         return res.status(201).json({message: 'This Subject has already existed!'});
     }
 }
-exports.multipleSubjectDelete = (req, res) => {
-    let list = req.body.list;
-    console.log(chalk.cyan(list))
-    Subject.deleteMany({_id: {$in: list }},
-        function(err, result) {
-            if (err) {
-                res.send(err);
-            } else {
-                res.send(result);
-            }
-        })
+
+exports.multipleSubjectDelete = async (req, res) => {
+    try {
+        let list = req.body.list;
+        await Subject.deleteMany({_id: {$in: list }});
+        await Chapter.deleteMany({subject: {$in: list }});
+        await Quiz.deleteMany({subject: {$in: list }});
+        return res.status(200).json({message: 'Items successfully deleted'});
+    } catch (error){
+        return res.status(400).json({message: error});
+    }
 }

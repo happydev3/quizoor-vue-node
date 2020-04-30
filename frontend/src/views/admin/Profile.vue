@@ -101,7 +101,6 @@ export default {
     },
     changePassword() {
     this.$validator.validate().then(isValid => {
-      console.log(isValid)
         if (isValid) {
           let rdata = {
             id: this.user,

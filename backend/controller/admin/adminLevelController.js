@@ -1,43 +1,36 @@
 const Level = require('../../model/Level');
 const User = require('../../model/User');
+const Subject = require('../../model/Subject')
+const Category = require('../../model/Catetory');
+const Chapter = require('../../model/Chapter');
+const Quiz = require('../../model/Quiz');
 const chalk = require('chalk');
 
 exports.getLevel = async (req, res) => {
-    let id = req.params.id;
-    let checkSuperAdmin = await User.findOne({_id: id});
-    if(checkSuperAdmin.role == 'superadmin') {
-        Level.find({}).then((level) => {
-            if(level) {
-                // console.log(chalk.cyan(level))
-                return res.status(200).json(level);
-            } else {
-                return res.status(200).json('');
-            }
-        })
-        .catch(error => {
-            return res.status(400).json(error);
-        });
-    } else if(checkSuperAdmin == 'admin') {
-        Level.find({userID: id}).then((level) => {
-            if(level) {
-                // console.log(chalk.cyan(level))
-                return res.status(200).json(level);
-            } else {
-                return res.status(200).json('');
-            }
-        })
-        .catch(error => {
-            return res.status(400).json(error);
-        });
-    }
+    const id = req.params.id;
+    const checkSuperAdmin = await User.findOne({_id: id});
+    let tempLocale = [];
+    checkSuperAdmin.locations.map(function(location){
+        tempLocale.push(location.value);
+    });
+    let locale = tempLocale;
+    console.log(locale);
+    Level.find({location: {$in: locale }}).then((level) => {
+        if(level) {
+            return res.status(200).json(level);
+        } else {
+            return res.status(200).json('');
+        }
+    })
+    .catch(error => {
+        return res.status(400).json(error);
+    });
 }       
 exports.addLevel = async (req, res) => {
     const name = req.body.name;
     const location = req.body.location;
     const userID = req.body.userID;
-    console.log(chalk.green('this is name and location',name,location,userID));
     let checkLevel = await Level.findOne({name: name, location: location})
-    console.log(checkLevel);
     if(checkLevel) {
         return res.status(201).json({message: 'This level has already existed!'});
     } else {
@@ -55,20 +48,18 @@ exports.addLevel = async (req, res) => {
     }
 }
 
-exports.removeLevel = (req, res) => {
-    const id = req.body.id;
-    Level.deleteOne({ _id: id}).then(
-        res => {
-            return res.status(200).json({message: 'The Item successfully deleted'})
-        },
-        err => {
-            return res.status(400).json({message: err})
-        }
-    ).catch(
-        error => {
-            return res.status(400).json({message: error})
-        }
-    )
+exports.removeLevel = async (req, res) => {
+    try {
+        const id = req.body.id;
+        await Level.deleteOne({_id: id});
+        await Category.deleteMany({level: id});
+        await Subject.deleteMany({level: id});
+        await Chapter.deleteMany({level: id});
+        await Quiz.deleteMany({level: id});
+        return res.status(200).json({message: 'The Item successfully deleted'});
+    } catch(error) {
+        return res.status(400).json({message: error});
+    }
 }
 
 exports.changeStatusLevel = (req, res) => {
@@ -108,7 +99,6 @@ exports.getLevelById = (req, res) => {
     Level.findOne({_id: id}).then(
         level => {
             if(level) {
-                console.log(chalk.cyan(level))
                 return res.status(200).json(level);
             } else {
                 return res.status(200).json('');
@@ -126,7 +116,6 @@ exports.getLevelById = (req, res) => {
 exports.updateLevelById = async (req, res) => {
     const id = req.body.id;
     const name = req.body.name;
-    console.log(chalk.cyan(id, name));
     let checkLevel = await Level.findOne({name: name});
     if( !checkLevel ) {
         Level.findByIdAndUpdate(id, { name: name }).then(
@@ -143,15 +132,16 @@ exports.updateLevelById = async (req, res) => {
     }
     
 }
-exports.multipleDeleteLevel = (req, res) => {
-    let list = req.body.list;
-    console.log(chalk.cyan(list))
-    Level.deleteMany({_id: {$in: list }},
-        function(err, result) {
-            if (err) {
-                res.send(err);
-            } else {
-                res.send(result);
-            }
-        })
+exports.multipleDeleteLevel = async (req, res) => {
+    try {
+        let list = req.body.list;
+        await Level.deleteMany({_id: {$in: list }});
+        await Category.deleteMany({level: {$in: list }});
+        await Subject.deleteMany({level: {$in: list }});
+        await Chapter.deleteMany({level: {$in: list }});
+        await Quiz.deleteMany({level: {$in: list }});
+        return res.status(200).json({message: 'Items successfully deleted'});
+    } catch (error){
+        return res.status(400).json({message: error});
+    }
 }

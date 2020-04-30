@@ -90,10 +90,8 @@ export default {
               subjectID: this.subject,
               content: this.content
             }
-            console.log('+++++++++++editChapters+++++++++',rdata);
               return AdminService.editChapter(rdata).then(
                 res => {
-                  console.log(res);
                   if(res.data.message == 'successfully updated') {
                     this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
                     setTimeout(() => { this.$router.push('/admin/category-courses/chapters') }, 500);
@@ -111,7 +109,6 @@ export default {
                 subjectID: this.subject,
                 content: this.content
               }
-              console.log('+_+++++++++++addChapters+++++++',rdata);
               return AdminService.addChapter(rdata).then(
                 res => {
                   if(res.data.message == 'Successfully Added') {
@@ -129,9 +126,6 @@ export default {
     onChange1() {
       this.$store.dispatch(LEVELSELECT, this.level).then(
         res => {
-          console.log(res.data)
-          this.category = ''
-          this.subject = ''
           return this.categories = res.data;
         }
       )
@@ -139,8 +133,6 @@ export default {
     onChange2() {
       this.$store.dispatch(CATEGORYSELECT, this.category).then(
         res => {
-          console.log(res.data)
-          this.subject = ''
           return this.subjects = res.data;
         }
       )
@@ -167,7 +159,6 @@ export default {
     )
     if (this.routename == 'editChapters') {
       const id = this.$router.currentRoute.params.id;
-      console.log(id);
       return AdminService.getChapterById(id).then(
         res => {
           this.chapterID = res.data._id
@@ -176,8 +167,7 @@ export default {
           this.level = res.data.level;
           this.category = res.data.category;
           this.subject = res.data.subject;
-          // this.content = res.data.content;
-          console.log(res);
+          this.content = res.data.content;
         },
         error => {
           console.log(error)

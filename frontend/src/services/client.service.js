@@ -5,7 +5,6 @@ import authHeader from './auth.header';
 class ClientService {
   getSearchValue(rdata) {
     let location = rdata;
-    console.log(location);
     return axios.get(API_URL + 'getSearchValue/' + location).then(
       res => {
         return res;
@@ -17,10 +16,8 @@ class ClientService {
   }
   getSearchCategory(rdata){
     let levelID = rdata;
-    console.log(levelID)
     return axios.get(API_URL + 'getSearchCategory/' + levelID).then(
       res => {
-        console.log(res);
         return res;
       },
       error => {
@@ -30,10 +27,8 @@ class ClientService {
   }
   getSearchSubject(rdata) {
     let categoryID = rdata;
-    console.log(categoryID);
     return axios.get(API_URL + 'getSearchSubject/' + categoryID).then(
       res => {
-        console.log(res);
         return res;
       },
       error => {
@@ -55,7 +50,6 @@ class ClientService {
   getSearchTrakItems(rdata) {
     return axios.get(API_URL + 'getSearchTrakItems/' + rdata, { headers: authHeader()} ).then(
       res => {
-        console.log(res);
         return res;
       },
       error => {
@@ -67,7 +61,6 @@ class ClientService {
   updateQuizItem(rdata) {
     return axios.get(API_URL + 'updateQuizItem/' + rdata, { headers: authHeader() }).then(
       res => {
-        console.log(res);
         return res;
       },
       error => {
@@ -79,7 +72,6 @@ class ClientService {
   getTestItem(rdata) {
     return axios.get(API_URL + 'getTestItem/' + rdata, { headers: authHeader() }).then(
       res => {
-        console.log(res);
         return res;
       },
       error => {

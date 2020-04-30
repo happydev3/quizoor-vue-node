@@ -508,7 +508,6 @@ class AdminService {
     )
   }
   addQuiz(rdata) {
-    console.log(rdata);
     return axios.post(API_URL + 'addQuiz', {
       user: rdata.user,
       level : rdata.level,
@@ -520,7 +519,7 @@ class AdminService {
       questions : rdata.questions
     }, { headers: authHeader() }).then(
       res => {
-        console.log(res)
+        return res;
       },
       error => {
         console.log(error)
@@ -569,7 +568,6 @@ class AdminService {
     })
   }
   updateStatusQuiz(data) {
-    console.log(data);
     return axios.post(API_URL + 'updateStatusQuiz', {
       id: data.id,
       status: data.status
@@ -626,6 +624,26 @@ class AdminService {
       }
     )
   }
+  editQuiz(rdata) {
+    return axios.post(API_URL + 'editQuiz', {
+      quizID: rdata.quizID,
+      user: rdata.user,
+      level : rdata.level,
+      category : rdata.category,
+      subject : rdata.subject,
+      chapter : rdata.chapter,
+      name : rdata.name,
+      difficulty : rdata.difficulty,
+      questions : rdata.questions
+    }, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  }
 
   //profile
 
@@ -636,7 +654,6 @@ class AdminService {
       lastname: rdata.lastname
     }, { headers: authHeader() }).then(
       res => {
-        console.log(res);
         return res;
       },
       error => {
@@ -651,7 +668,6 @@ class AdminService {
       newPassword: rdata.newPassword
     }, { headers: authHeader() }).then(
       res => {
-        console.log(res);
         return res;
       },
       error => {

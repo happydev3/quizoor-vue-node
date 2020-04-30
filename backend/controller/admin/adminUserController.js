@@ -1,25 +1,51 @@
 const User = require('../../model/User');
+const Level = require('../../model/Level');
+const Subject = require('../../model/Subject');
+const Category = require('../../model/Catetory');
+const Chapter = require('../../model/Chapter');
+const Quiz = require('../../model/Quiz');
 const chalk = require('chalk');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-exports.getAllUser = (req, res) => {
+
+exports.getAllUser = async (req, res) => {
     let id = req.params.id;
-    User.find({}).then(
-        (user) => {
-            if(user) {
-                return res.status(200).json(user);
-            } else {
-                return res.status(200).json('');
+    let checkSuperAdmin = await User.findOne({_id: id});
+    if(checkSuperAdmin.role == 'superadmin') {
+        User.find({}).then(
+            (user) => {
+                if(user) {
+                    return res.status(200).json(user);
+                } else {
+                    return res.status(200).json('');
+                }
+            },
+            error => {
+                return res.status(201).json({message: error})
             }
-        },
-        error => {
-            return res.status(201).json({message: error})
-        }
-    ).catch(
-        error => {
-            return res.status(201).json({message: error})
-        }
-    )
+        ).catch(
+            error => {
+                return res.status(201).json({message: error})
+            }
+        )
+    } else if(checkSuperAdmin.role == "admin") {
+        User.find({role: {$in: ['author', 'user']}}).then(
+            (user) => {
+                if(user) {
+                    return res.status(200).json(user);
+                } else {
+                    return res.status(200).json('');
+                }
+            },
+            error => {
+                return res.status(201).json({message: error})
+            }
+        ).catch(
+            error => {
+                return res.status(201).json({message: error})
+            }
+        )
+    }
 }
 exports.changeStatusUser = (req, res) => {
     const id = req.body.id;
@@ -96,14 +122,15 @@ exports.getUserById = (req, res) => {
 }
 exports.addUser = async (req, res) => {
     try {
+        console.log(req.body.location);
         const checkUser = await User.findOne({ email: req.body.email });
         if (!checkUser) {
-            const userdata = new User({
+            let userdata = new User({
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
                 email: req.body.email,
                 password: req.body.password,
-                location: req.body.location,
+                locations: req.body.location,
                 role : req.body.role
             });
             let user = await userdata.save();

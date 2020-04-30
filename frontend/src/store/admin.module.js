@@ -180,7 +180,6 @@ const actions = {
     )
   },
   [LEVELSELECT](context, rdata) {
-    console.log('this is level id ......', rdata);
     return adminService.getCategorybySelectedLevel(rdata).then(
       res => {
         return res;
@@ -192,7 +191,6 @@ const actions = {
     )
   },
   [CATEGORYSELECT](context, rdata) {
-    console.log('this is category id ......', rdata);
     return adminService.getSubjectbySelectedCategory(rdata).then(
       res => {
         return res;
@@ -204,7 +202,6 @@ const actions = {
     )
   },
   [SUBJECTSELECT](context, rdata) {
-    console.log('this is subject id ......', rdata);
     return adminService.getChapterbySelectedSubject(rdata).then(
       res => {
         return res;

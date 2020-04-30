@@ -71,9 +71,9 @@
               Question #{{index+1}}
             </h3>
             <vs-button color="danger" type="filled" icon-pack="feather" icon="icon-archive" @click="deleteQuestion(index)"></vs-button>
-            <!-- <vs-button color="danger" size="small" type="filled" @click="deleteQuestion(index)">X</vs-button> -->
           </div>
           <quill-editor v-model="question.content" :style="{marginBottom: '20px'}"></quill-editor>
+          <vs-input-number v-validate="'required'" min="1" max="5" color="success" v-model="question.mark"/>
           <div class="vx-col w-full between-field" :key="i" v-for="(answer, i) in question.answers">
             <vs-row vs-w="12" :style="{marginTop: '15px'}" v-if="windowWidth>1024">
               <vs-col vs-offset="1" vs-w="1" vs-align="center" :style="{paddingTop: '20px'}"><h6>Answer{{i+1}}:</h6></vs-col>
@@ -152,7 +152,8 @@ export default {
       ],
       questions: [],
       content: `...`,
-      answers: []
+      answers: [],
+      QuizID: ''
     }
   },
   computed: {
@@ -184,15 +185,30 @@ export default {
         console.log(error);
       }
     )
+    if (this.routename == 'quizz-edit') {
+    const id = this.$router.currentRoute.params.id;
+    return AdminService.getQuizById(id).then(
+      res => {
+        this.QuizID = res.data._id
+        this.name = res.data.name;
+        this.status = res.data.status;
+        this.level = res.data.level._id;
+        this.category = res.data.category._id;
+        this.subject = res.data.subject._id;
+        this.chapter = res.data.chapter._id;
+        this.questions = res.data.questions;
+        this.difficulty = res.data.difficulty;
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  }
   },
   methods: {
     onChange1() {
       this.$store.dispatch(LEVELSELECT, this.level).then(
         res => {
-          console.log(res.data)
-          this.category = ''
-          this.subject = ''
-          this.chapter = ''
           return this.categories = res.data;
         }
       )
@@ -200,9 +216,6 @@ export default {
     onChange2() {
       this.$store.dispatch(CATEGORYSELECT, this.category).then(
         res => {
-          console.log(res.data)
-          this.subject = ''
-          this.chapter = ''
           return this.subjects = res.data;
         }
       )
@@ -210,17 +223,13 @@ export default {
     onChange3() {
       this.$store.dispatch(SUBJECTSELECT, this.subject).then(
         res => {
-          console.log(res.data)
-          this.chapter = ''
           return this.chapters = res.data;
         }
       )
     },
     validateStep1() {
-      console.log('++++validateStep1++++');
       return new Promise((resolve, reject) => {
         this.$validator.validateAll('step-1').then(result => {
-          console.log('++++++++result++++++++++', result)
           if (result) {
             resolve(true)
           } else {
@@ -244,26 +253,52 @@ export default {
       return new Promise((resolve, reject) => {
         this.$validator.validateAll("step-3").then(result => {
           if (result) {
-            let rdata = {
-              user: this.user,
-              level: this.level,
-              category: this.category,
-              subject: this.subject,
-              chapter: this.chapter,
-              name: this.name,
-              difficulty: this.difficulty,
-              questions: this.questions,
-            }
-            console.log(rdata);
-            return AdminService.addQuiz(rdata).then(
-              res => {
-                console.log(res);
-                this.$router.push('/admin/quizz/all')
-              },
-              error => {
-                console.log(error);
+            if(this.routename == 'quizz-edit') {
+              let rdata = {
+                quizID: this.QuizID,
+                user: this.user,
+                level: this.level,
+                category: this.category,
+                subject: this.subject,
+                chapter: this.chapter,
+                name: this.name,
+                difficulty: this.difficulty,
+                questions: this.questions,
+              } 
+              return AdminService.editQuiz(rdata).then(
+                res => {
+                  if(res.data.message == 'successfully updated') {
+                    this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
+                    setTimeout(() => { this.$router.push('/admin/quizz/all') }, 500);
+                  } 
+                }
+              )
+
+            } else if(this.routename == 'quizz-add') {
+              let rdata = {
+                user: this.user,
+                level: this.level,
+                category: this.category,
+                subject: this.subject,
+                chapter: this.chapter,
+                name: this.name,
+                difficulty: this.difficulty,
+                questions: this.questions,
               }
-            )
+              return AdminService.addQuiz(rdata).then(
+                res => {
+                  if(res.data.message == 'Quiz added successfully') {
+                    this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
+                    setTimeout(() => { this.$router.push('/admin/quizz/all') }, 500);
+                  } else if (res.data.message == 'This Chapter has already existed!') {
+                    this.$vs.notify({ title: res.data.message, color:'warning', position:'top-right' });
+                  }
+                },
+                error => {
+                  console.log(error);
+                }
+              )
+            }
           } else {
             reject("correct all values");
           }
@@ -273,6 +308,7 @@ export default {
     addQuestion() {
       this.questions.push({
           content : '',
+          mark: 1,
           answers : []
       })
     },
@@ -283,12 +319,10 @@ export default {
       })
     },
     deleteQuestion(index) {
-      console.log(index);
       if (this.questions.length <= 1) return;
       this.questions.splice(index, 1);
     },
     deleteAnswer(index, i) {
-      console.log(index, i);
       if(this.questions[index].answers<=1) return;
       this.questions[index].answers.splice(i, 1);
     }

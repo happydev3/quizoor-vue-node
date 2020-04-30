@@ -1,14 +1,14 @@
 const Level = require('../../model/Level');
 const User = require('../../model/User');
-const Subject = require('../../model/Subject');
-const Chapter = require('../../model/Chapter');
+const Subject = require('../../model/Subject')
 const Category = require('../../model/Catetory');
+const Chapter = require('../../model/Chapter');
+const Quiz = require('../../model/Quiz');
 const chalk = require('chalk');
 
 
 exports.getSubjectbySelectedCategory = (req, res) => {
     let CategoryID = req.params.id;
-    console.log('requires CategoryID', CategoryID)
     Subject.find({ category: CategoryID, status: 'activated' }).populate('category').then((subject) => {
         return res.status(200).json(subject);
     })
@@ -16,25 +16,28 @@ exports.getSubjectbySelectedCategory = (req, res) => {
         return res.status(400).json(error);
     });
 }
+
 exports.getChapter = async (req, res) => {
     let id = req.params.id;
     let checkSuperAdmin = await User.findOne({_id: id});
-    if(checkSuperAdmin.role == 'superadmin') {
-        Chapter.find({ }).populate('level').populate('category').populate('subject').then((chapter) => {
-            return res.status(200).json(chapter);
-        })
-        .catch(error => {
-            return res.status(400).json(error);
-        });
-    } else if(checkSuperAdmin.role == 'admin') {
-        Chapter.find({ user: id }).populate('level').populate('category').populate('subject').then((chapter) => {
-            return res.status(200).json(chapter);
-        })
-        .catch(error => {
-            return res.status(400).json(error);
-        });
-    }
-}       
+    let tempLocale = [];
+    checkSuperAdmin.locations.map(function(location){
+        tempLocale.push(location.value);
+    });
+    let locale = tempLocale;
+    let levels = await Level.find({location: {$in: locale}});
+    let tempLevelIds = [];
+    levels.map(function(level){
+        tempLevelIds.push(level._id);
+    });
+    let levelIds = tempLevelIds;
+    Chapter.find({level: {$in: levelIds}}).populate('level').populate('category').populate('subject').then((chapter) => {
+        return res.status(200).json(chapter);
+    })
+    .catch(error => {
+        return res.status(400).json(error);
+    });
+}  
 exports.addChapter = (req, res) => {
     console.log(req.body)
     const name = req.body.name;
@@ -46,7 +49,7 @@ exports.addChapter = (req, res) => {
     console.log(chalk.green('this is name and location',name, levelID, userID, categoryID, subjectID, content));
     Chapter.findOne({name: name, level: levelID, category: categoryID, subjectID: subjectID}).then((chapter) => {
         if(chapter) {
-            return res.status(200).json({message: 'This Chapter has already existed!'});
+            return res.status(200).json({message: 'This Chapter has already existed!'});    
         } else {
             let chapter = new Chapter({
                 name: name,
@@ -65,24 +68,30 @@ exports.addChapter = (req, res) => {
     })
 }
 
-exports.removeChapter = (req, res) => {
-    const id = req.body.id;
-    Chapter.deleteOne({ _id: id}).then(
-        res => {
-            return res.status(200).json({message: 'The Item successfully deleted'})
-        },
-        err => {
-            return res.status(400).json({message: err})
-        }
-    ).catch(
-        error => {
-            return res.status(400).json({message: error})
-        }
-    )
+exports.removeChapter = async (req, res) => {
+    try {
+        const id = req.body.id;
+        await Chapter.deleteOne({_id: id});
+        await Quiz.deleteMany({chapter: id});
+        return res.status(200).json({message: 'The Item successfully deleted'});
+    } catch(error) {
+        return res.status(400).json({message: error});
+    }
+}
+
+exports.removeSubject = async (req, res) => {
+    try {
+        const id = req.body.id;
+        await Subject.deleteOne({_id: id});
+        await Chapter.deleteMany({subject: id});
+        await Quiz.deleteMany({subject: id});
+        return res.status(200).json({message: 'The Item successfully deleted'});
+    } catch(error) {
+        return res.status(400).json({message: error});
+    }
 }
 
 exports.updateStatusChapter = (req, res) => {
-    console.log(chalk.cyan('++++++updatestatussubject++++',JSON.stringify(req.body)));
     const id = req.body.id;
     const status = req.body.status;
     if (status == 'activated') {
@@ -133,6 +142,7 @@ exports.getChapterById = (req, res) => {
         }
     )
 }
+
 exports.editChapter = async (req, res) => {
     console.log(req.body);
     const id = req.body.chapterID;
@@ -158,15 +168,13 @@ exports.editChapter = async (req, res) => {
         return res.status(201).json({message: 'This Subject has been already existed!'});
     }
 }
-exports.multipleChapterDelete = (req, res) => {
-    let list = req.body.list;
-    console.log(chalk.cyan(list))
-    Chapter.deleteMany({_id: {$in: list }},
-        function(err, result) {
-            if (err) {
-                res.send(err);
-            } else {
-                res.send(result);
-            }
-        })
+exports.multipleChapterDelete = async (req, res) => {
+    try {
+        let list = req.body.list;
+        await Chapter.deleteMany({_id: {$in: list }});
+        await Quiz.deleteMany({chapter: {$in: list }});
+        return res.status(200).json({message: 'Items successfully deleted'});
+    } catch (error){
+        return res.status(400).json({message: error});
+    }
 }

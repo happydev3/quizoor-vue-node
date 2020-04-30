@@ -31,6 +31,7 @@ exports.addQuiz = (req, res) => {
     let tempQuiz = [];
     req.body.questions.map(function(question){
         let content = question.content;
+        let mark = question.mark;
         let answers = [];
         let tempAnswers = [];
         question.answers.map(function(item){
@@ -42,6 +43,7 @@ exports.addQuiz = (req, res) => {
         answers = tempAnswers;
         tempQuiz.push({
             content: content,
+            mark: mark,
             answers: answers
         })
     })
@@ -208,7 +210,6 @@ exports.getQuizById = (req, res) => {
     Quiz.findOne({_id: id}).populate('user').populate('level').populate('category').populate('subject').populate('chapter').then(
         quiz => {
             if(quiz) {
-                console.log(chalk.cyan(quiz))
                 return res.status(200).json(quiz);
             } else {
                 return res.status(200).json('');
@@ -235,4 +236,66 @@ exports.checkVerify = (req, res) => {
             return res.status(400).json({message: error});
         }
     )
+}
+
+exports.editQuiz = async (req, res) => {
+    console.log(req.body);
+    let id = req.body.quizID;
+    let name = req.body.name;
+    let difficulty = req.body.difficulty;
+    let level = req.body.level;
+    let category = req.body.category;
+    let subject = req.body.subject;
+    let chapter = req.body.chapter;
+    let questions = req.body.questions;
+    Quiz.findByIdAndUpdate(id, { name: name, difficulty: difficulty, level: level, category: category, subject: subject, chapter: chapter, questions: questions }).then(
+        quiz => {
+            return res.status(200).json({message: 'successfully updated'})
+        }
+    ).catch(
+        error => {
+            return res.status(201).json({message: error})
+        }
+    )
+    // console.log(req.body);
+    // const id = req.body.quizID;
+    // let quiz = await Quiz.findOne({_id: id});
+    // console.log('>>>>>>>>>>>>>>>', quiz);
+    // quiz.name = req.body.name;
+    // quiz.difficulty = req.body.difficulty;
+    // quiz.user = req.body.user;
+    // quiz.level = req.body.level;
+    // quiz.chapter = req.body.chapter;
+    // quiz.subject = req.body.subject;
+    // quiz.category = req.body.category;
+    // let tempQuiz = [];
+    // req.body.questions.map(function(question){
+    //     let content = question.content;
+    //     let mark = question.mark;
+    //     let answers = [];
+    //     let tempAnswers = [];
+    //     question.answers.map(function(item){
+    //         tempAnswers.push({
+    //             content: item.content,
+    //             value: item.value
+    //         })
+    //     })
+    //     answers = tempAnswers;
+    //     tempQuiz.push({
+    //         content: content,
+    //         mark: mark,
+    //         answers: answers
+    //     })
+    // })
+    // quiz.questions = tempQuiz;
+    // quiz.save().then(
+    //     quiz => {
+    //         console.log('_____________quiz________________',quiz);
+    //         return res.status(200).json({message: 'Quiz updated successfully'});
+    //     }
+    // ).catch(
+    //     error => {
+    //         return res.status(400).json({message: error});
+    //     }
+    // );
 }

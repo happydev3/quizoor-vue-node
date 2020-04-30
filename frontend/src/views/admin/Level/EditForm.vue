@@ -31,7 +31,6 @@ export default {
     return AdminService.getLevelById(id).then(
       res => {
         this.name = res.data.name;
-        console.log(res);
       },
       error => {
         console.log(error)
@@ -52,7 +51,6 @@ export default {
           } else if (res.data.message == 'This level has already existed!') {
             this.$vs.notify({ title: res.data.message, color:'warning', position:'top-right' });
           }
-          console.log(res);
         }
       )
     },

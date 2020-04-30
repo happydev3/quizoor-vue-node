@@ -47,8 +47,12 @@ const QuizSchema = Schema({
             content: {
                 type: Object
             },
+            image: {
+                type: Object
+            },
             mark: {
-                type: Number
+                type: Number,
+                default: 1
             },
             answers: [{
                 content: { type: Object },

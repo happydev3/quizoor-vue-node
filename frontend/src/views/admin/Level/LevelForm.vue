@@ -84,7 +84,6 @@ export default {
           }
           this.$store.dispatch(ADDLEVEL, rdata).then(
             res => {
-              console.log(res);
               if(res.data.message == 'Added successfully') {
                   this.$vs.notify({ title: res.data.message,  color:'success', position:'top-right' })
               } else if (res.data.message == 'This level has already existed!') {

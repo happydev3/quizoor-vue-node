@@ -47,7 +47,6 @@ const actions = {
     )
   },
   [GETTRACKITEMS](context, rdata) {
-    console.log(rdata);
     return ClientService.getSearchTrakItems(rdata).then(
       res => {
         context.commit(GETTRACKITEMSSUCCESS, res);

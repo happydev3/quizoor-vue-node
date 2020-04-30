@@ -68,6 +68,7 @@ router.post('/removeQuiz', auth, adminQuizController.removeQuiz);
 router.post('/multipleQuizDelete', auth, adminQuizController.multipleQuizDelete);
 router.get('/getQuizById/:id', auth, adminQuizController.getQuizById);
 router.get('/checkVerify/:id', auth, adminQuizController.checkVerify);
+router.post('/editQuiz', auth, adminQuizController.editQuiz);
 
 router.post('/changeName', auth, userController.changeName);
 router.post('/changePassword', auth, userController.changePassword);

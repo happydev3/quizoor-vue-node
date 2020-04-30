@@ -117,8 +117,6 @@ export default {
         this.status = res.data.status;
         this.verification = res.data.verification;
         this.questions = res.data.questions;
-        console.log('_______++++++_______', res.data);
-        console.log('________questions_________', this.questions);
       },
       error => {
         console.log(error);

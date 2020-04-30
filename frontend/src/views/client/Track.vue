@@ -80,7 +80,7 @@ export default {
         '$route.params.id': function (id) {
             console.log(id);
             this.$store.dispatch(GETTRACKITEMS, id);
-        }
+        },
     },
     created() {
         this.subjectId = this.$router.currentRoute.params.id;
@@ -156,6 +156,9 @@ export default {
         cursor: pointer;
         padding: 5px;
     }
+    .chapterName:hover {
+        background: rgb(211, 210, 210);
+    } 
     .chapterSummary {
         font-size: 20px;
         padding: 10px;

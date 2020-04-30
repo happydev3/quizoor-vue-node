@@ -138,7 +138,6 @@ export default {
     // I18N
     getCurrentLocaleData() {
         const locale = this.$i18n.locale;
-        console.log(locale);
         if (locale == "en") return { flag: "us", lang: 'English' }
         else if (locale == "pt") return { flag: "br", lang: 'Portuguese' }
         else if (locale == "fr") return { flag: "fr", lang: 'French' }
@@ -198,7 +197,6 @@ export default {
       )
     },
     moveTrack(id) {
-      // console.log(id);
       this.$router.push('/track/' + id);
     }
   },
@@ -220,6 +218,9 @@ export default {
     text-align: center;
     background-color: darkorchid;
     margin-top: 5px;
+    -webkit-transition: ease-in 0.7s all !important;
+    transition: ease-in 0.7s all !important;
+    /* animation: animateleft 0.7s !important; */
   }
   #toggleCategoryMenu {
     z-index: 999;
@@ -230,6 +231,9 @@ export default {
     text-align: center;
     background-color: darkorchid;
     margin-top: 5px;
+    -webkit-transition: ease-in 0.7s all !important;
+    transition: ease-in 0.7s all !important;
+    /* animation: animateleft 0.7s !important; */
   }
   #toggleSubjectMenu {
     z-index: 999;
@@ -240,6 +244,9 @@ export default {
     text-align: center;
     background-color: darkorchid;
     margin-top: 5px;
+    -webkit-transition: ease-in 0.7s all !important;
+    transition: ease-in 0.7s all !important;
+    /* animation: animateleft 0.7s !important; */
   }
   .searchItemField {
     margin-top: 5px;
