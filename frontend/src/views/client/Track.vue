@@ -54,11 +54,13 @@ export default {
     },
     computed: {
         ...mapState({
+            user: state => state.auth.initialState.user.user._id,
             subjectInformation: state => state.client.subjectInformation,
             chapterItems: state => state.client.chapterItems,
             quizItems: state => state.client.quizItems,
             chapterSummary: state => state.client.chapterSummary,
-            chapterName: state => state.client.chapterName
+            chapterName: state => state.client.chapterName,
+            quizHistories: state => state.client.quizHistories
         })
     },
     methods :{
@@ -69,23 +71,31 @@ export default {
         },
         updateQuizItem(id) {
             console.log(id);
-            this.$store.dispatch(UPDATEQUIZITEM, id);
+            let rdata = {
+                id: id,
+                user: this.user
+            }
+            this.$store.dispatch(UPDATEQUIZITEM, rdata);
         },
         quizEnter(id) {
             console.log(id);
             this.$router.push('/test/'+ id);
         }
     },
-    watch: {
-        '$route.params.id': function (id) {
-            console.log(id);
-            this.$store.dispatch(GETTRACKITEMS, id);
-        },
-    },
+    // watch: {
+    //     '$route.params.id': function (id) {
+    //         console.log(id);
+    //         this.$store.dispatch(GETTRACKITEMS, id);
+    //     },
+    // },
     created() {
         this.subjectId = this.$router.currentRoute.params.id;
         console.log(this.subjectId);
-        this.$store.dispatch(GETTRACKITEMS, this.subjectId);
+        let rdata = {
+            id: this.subjectId,
+            user: this.user
+        }
+        this.$store.dispatch(GETTRACKITEMS, rdata);
     }
 }
 </script>

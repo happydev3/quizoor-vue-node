@@ -8,30 +8,36 @@
             <vs-progress :height="12" :percent='this.percent' color="primary"></vs-progress>
             <div>
                 <div class="quiz__inner-header" v-html="questions[questionIndex].content">{{questions[questionIndex].content}}</div>
-                <ul>
-                    <li class="quiz__choice" v-for="(answer, i) in questions[questionIndex].answers" :key="i">
+                <ul v-if="questions[questionIndex].quizType == 'multiple' || questions[questionIndex].quizType == 'truefalse'">
+                    <li v-for="(answer, i) in questions[questionIndex].answers" :key="i">
                         <div>
                             <vs-checkbox v-model="clientAnswers[i]" :style="{marginTop: '5px', marginLeft: '0px', marginRight: '0px'}"></vs-checkbox>
                         </div>
                         <label class="container-box" :style="{paddingLeft: '2px'}">
-                            <strong>{{ i+1 }}</strong>
+                            <strong>{{answerHeader[i]}}:</strong>
                         </label>
                         <p v-html="answer.content">{{answer.content}}</p>
                     </li>
                 </ul>
+                <ul v-if="questions[questionIndex].quizType == 'matching'">
+                    <li class="quiz__choice" v-for="(answer, i) in questions[questionIndex].answers" :key="i" :style="{display: 'flex', justifyContent: 'space-between'}">
+                        <div :style="{display: 'flex'}">
+                            <label class="container-box" :style="{paddingLeft: '2px'}">
+                                <strong>{{answerHeader[i]}}:</strong>
+                            </label>
+                            <p v-html="answer.content">{{answer.content}}</p>
+                        </div>
+                        <div>
+                            <vs-select class="selectExample" v-model="clientAnswers[i]">
+                                <vs-select-item :key="index" :value="item" :text="item" v-for="(item,index) in matchingValues" />
+                            </vs-select>
+                        </div>
+                    </li>
+                </ul>
             </div>
             <div class="vx-col w-full mb-base correct-answer-field" v-if="isWrong == true">
-                <vx-card title="Correct Result">
-                <table style="width:100%" class="border-collapse">
-                    <tr>
-                        <th class="p-2 border border-solid d-theme-border-grey-light correct-answer-header">Answers</th>
-                        <th class="p-2 border border-solid d-theme-border-grey-light">value</th>
-                    </tr>
-                    <tr v-for="(answer, i) in questions[questionIndex].answers" :key="i">
-                        <td class="p-2 border border-solid d-theme-border-grey-light" v-html="answer.content">{{answer.content}}</td>
-                        <td class="p-2 border border-solid d-theme-border-grey-light" :style="[answer.value == true ? {color: 'green'} : {color: 'red'}]">{{answer.value}}</td>
-                    </tr>
-                </table>
+               <vx-card title="Reason" title-color="success" subtitle="">
+                    <p class="mb-3" v-html="questions[questionIndex].reason">{{questions[questionIndex].reason}}</p>
                 </vx-card>
             </div>
             <div class="quiz__inner--footer">
@@ -64,18 +70,25 @@
         </div>
 		<div class="demo-alignment" v-if="popupActive == true">
             <div class="vx-col w-full mb-base correct-answer-field" v-for="(question, index) in questions" :key="index">
-                <vx-card>
-                    <p v-html="question.content">{{question.content}}</p>
-                    <table style="width:100%" class="border-collapse">
-                        <tr>
-                            <th class="p-2 border border-solid d-theme-border-grey-light correct-answer-header">Answers</th>
-                            <th class="p-2 border border-solid d-theme-border-grey-light">value</th>
-                        </tr>
-                        <tr v-for="(answer, i) in question.answers" :key="i">
-                            <td class="p-2 border border-solid d-theme-border-grey-light" v-html="answer.content">{{answer.content}}</td>
-                            <td class="p-2 border border-solid d-theme-border-grey-light" :style="[answer.value == true ? {color: 'green'} : {color: 'red'}]">{{answer.value}}</td>
-                        </tr>
-                    </table>
+                <vx-card title-color="primary" :title='question.quizType'>
+                    <vx-card title="QUESTION" title-color="success" subtitle="">
+                         <p v-html="question.content">{{question.content}}</p>
+                    </vx-card>
+                    <vs-card title="Answers" title-color="warning" :style="{marginTop: '15px'}">
+                        <table style="width:100%" class="border-collapse">
+                            <tr>
+                                <th class="p-2 border border-solid d-theme-border-grey-light correct-answer-header">Answers</th>
+                                <th class="p-2 border border-solid d-theme-border-grey-light">value</th>
+                            </tr>
+                            <tr v-for="(answer, i) in question.answers" :key="i">
+                                <td class="p-2 border border-solid d-theme-border-grey-light" v-html="answer.content">{{answer.content}}</td>
+                                <td class="p-2 border border-solid d-theme-border-grey-light" :style="[answer.value == true ? {color: 'green'} : {color: 'red'}]">{{answer.value}}</td>
+                            </tr>
+                        </table>
+                    </vs-card>
+                     <vx-card title="Reason" title-color="success" subtitle="">
+                        <p class="mb-3" v-html="question.reason">{{question.reason}}</p>
+                    </vx-card>
                 </vx-card>
             </div>
             <div>
@@ -107,7 +120,11 @@ export default {
          isWrong: false,
          totalMark: 0,
          totalPerfectResult: 0,
-         popupActive: false
+         popupActive: false,
+         answerHeader: [
+            'A', 'B', 'C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'
+        ],
+        matchingValues: []
      }
  },
  computed: {
@@ -123,10 +140,41 @@ export default {
      this.$store.dispatch(GETESTITEM, quizId).then(
          res => {
             this.name = res.data.name;
-            this.questions = res.data.questions;
-            this.questions.map(function(item) {
-                console.log(item);
+            // this.questions = res.data.questions;
+            let tempQuiz = [];
+            let questions = [];
+            res.data.questions.map(function(question) {
+            let quizType = question.quizType;
+            let content =question.content;
+            let mark = question.mark;
+            let reason = question.reason;
+            let tempAnswers = [];
+            question.answers.map(function(item){
+                let tvalue = undefined;
+                if(item.value == 'true') {
+                    tvalue = true
+                } else if(item.value == 'false') {
+                    tvalue = false
+                } else {
+                    tvalue = item.value;
+                }
+                tempAnswers.push({
+                    content: item.content,
+                    value: tvalue
+                })
             })
+            
+            let answers = tempAnswers;
+                tempQuiz.push({
+                    quizType: quizType,
+                    content: content,
+                    mark: mark,
+                    answers: answers,
+                    reason: reason
+                })
+            questions = tempQuiz;
+            })
+            this.questions = questions;
             this.totalResult = this.questions.length;
             this.percent = 100 / this.totalResult;
          }
@@ -139,6 +187,30 @@ export default {
         this.isClick = false;
         this.isWrong = false;
         this.percent = 100 * (this.questionIndex + 1) / this.totalResult;
+        if(this.questions[this.questionIndex].quizType == 'matching') {
+        let tempValues = [];
+            this.questions[this.questionIndex].answers.map(function(answer) {
+                tempValues.push(answer.value);
+            })
+            let Values = tempValues;
+           
+            var currentIndex = Values.length, temporaryValue, randomIndex;
+
+            // While there remain elements to shuffle...
+            while (0 !== currentIndex) {
+
+                    // Pick a remaining element...
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex -= 1;
+
+                    // And swap it with the current element.
+                    temporaryValue = Values[currentIndex];
+                    Values[currentIndex] = Values[randomIndex];
+                    Values[randomIndex] = temporaryValue;
+            }
+            console.log('________Values__________', Values);
+            this.matchingValues = Values;
+        }
     },
     submitAnswer(questionIndex) {
         this.isClick = true;
@@ -152,7 +224,6 @@ export default {
                 rightAnswer++;
             }
         })
-        console.log('rightAnswer', rightAnswer);
         for(let i = 0; i < this.currentQuestion.answers.length; i++) {
             if(this.clientAnswers[i]) {
                 if(this.clientAnswers[i] == this.currentQuestion.answers[i].value) {
@@ -160,35 +231,52 @@ export default {
                 } else {
                     wrongCounter++;
                 }
-            } else {
-                console.log('false')
             }
         }
         if (rightCounter-wrongCounter > 0) {
-            getMark = (rightCounter-wrongCounter) * this.currentQuestion.mark/rightAnswer;
+            if(this.currentQuestion.quizType == 'multiple' || this.currentQuestion.quizType == 'truefalse') {
+                getMark = (rightCounter-wrongCounter) * this.currentQuestion.mark/rightAnswer;
+                console.log('getMark', getMark);
+            } else if(this.currentQuestion.quizType == 'matching') {
+                getMark = (rightCounter-wrongCounter) * this.currentQuestion.mark/this.currentQuestion.answers.length;
+                console.log('getMark', getMark);
+            }
         } else {
             getMark = 0;
         } 
         this.totalMark = this.totalMark + getMark;
-        console.log('rightCounter', rightCounter);
-        if(rightAnswer == rightCounter) {
-            if (wrongCounter == 0) {
-                this.totalPerfectResult++;
-                this.$vs.notify({ time:9000, title:'Congratulation! You are correct!', text: 'You selected all right answers and get' + ' ' +  getMark + ' ' + 'mark', color:'success', position:'top-center' })
-            } else if (wrongCounter > 0) {
-                this.isWrong = true;
-                this.$vs.notify({ time:9000, title:'You are wrong!', text: 'You selected all right answers but you selected wrong answers of ' + wrongCounter + ' and get' + ' ' +  getMark  + ' ' + 'mark', color:'warning', position:'top-center' })
+        if(this.currentQuestion.quizType == 'multiple' || this.currentQuestion.quizType == 'truefalse') {
+            if(rightAnswer == rightCounter) {
+                if (wrongCounter == 0) {
+                    this.totalPerfectResult++;
+                    this.$vs.notify({ time:9000, title:'Congratulation! You are correct!', text: 'You selected all right answers and get' + ' ' +  getMark + ' ' + 'mark', color:'success', position:'top-center' })
+                } else if (wrongCounter > 0) {
+                    this.isWrong = true;
+                    this.$vs.notify({ time:9000, title:'You are wrong!', text: 'You selected all right answers but you selected wrong answers of ' + wrongCounter + ' and get' + ' ' +  getMark  + ' ' + 'mark', color:'warning', position:'top-center' })
+                }
+            } else {
+                if (rightCounter > 0 && wrongCounter > 0) {
+                    this.isWrong = true;
+                    this.$vs.notify({time:9000,  title:'You are wrong!', text: 'You selected right answers' +  ' ' + rightCounter + 'of' + ' ' + rightAnswer + ', wrong answers of' + ' ' + wrongCounter  + 'and get' + ' ' +  getMark + ' ' + 'mark', color:'warning', position:'top-center' })
+                } else {
+                    this.isWrong = true;
+                    this.$vs.notify({time:9000,  title:'You are wrong!', text: 'You guessed nothing and get 0 mark', color:'danger', position:'top-center' })
+                }
             }
         } else {
-            if (rightCounter > 0 && wrongCounter > 0) {
-                this.isWrong = true;
-                this.$vs.notify({time:9000,  title:'You are wrong!', text: 'You selected right answers' +  ' ' + rightCounter + 'of' + ' ' + rightAnswer + ', wrong answers of' + ' ' + wrongCounter  + 'and get' + ' ' +  getMark + ' ' + 'mark', color:'warning', position:'top-center' })
+            if(this.currentQuestion.answers.length == rightCounter) {
+                this.totalPerfectResult++;
+                this.$vs.notify({ time:9000, title:'Congratulation! You are correct!', text: 'You selected all right answers and get' + ' ' +  getMark + ' ' + 'mark', color:'success', position:'top-center' })
             } else {
-                this.isWrong = true;
-                this.$vs.notify({time:9000,  title:'You are wrong!', text: 'You guessed nothing and get 0 mark', color:'danger', position:'top-center' })
+                if (rightCounter > 0 && wrongCounter > 0) {
+                    this.isWrong = true;
+                    this.$vs.notify({time:9000,  title:'You are wrong!', text: 'You selected right answers ' + rightCounter + ' of '  + this.currentQuestion.answers.length + ', wrong answers of ' + wrongCounter  + ' and get ' +  getMark + ' mark', color:'warning', position:'top-center' })
+                } else {
+                    this.isWrong = true;
+                    this.$vs.notify({time:9000,  title:'You are wrong!', text: 'You guessed nothing and get 0 mark', color:'danger', position:'top-center' })
+                }
             }
         }
-        console.log('these are total perfect result and total Mark', this.totalPerfectResult, this.totalMark);
     },
     viewDetail() {
         if (this.questionIndex == this.totalResult - 1) {
@@ -202,10 +290,8 @@ export default {
             totalMark: this.totalMark,
             totalPerfectResult: this.totalPerfectResult
         }
-        console.log(rdata);
         return ClientService.saveTestResult(rdata).then(
             res => {
-                console.log(res);
                 this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
                 this.$router.go(-1);
             }

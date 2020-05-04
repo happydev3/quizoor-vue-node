@@ -88,7 +88,7 @@
 
             <div v-if="questions[index].quizType == 'multiple'">
               <vs-row vs-w="12" :style="{marginTop: '15px'}" v-if="windowWidth>1024">
-                <vs-col vs-offset="1" vs-w="1" vs-align="center" :style="{paddingTop: '20px'}"><h6>{{answerHeader[i]}}:</h6></vs-col>
+                <vs-col  vs-w="1" vs-align="center" :style="{paddingTop: '20px'}"><h6>{{answerHeader[i]}}:</h6></vs-col>
                 <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="8">
                   <quill-editor v-model="answer.content" name="answerContent" v-validate="'required'"></quill-editor>
                 </vs-col>
@@ -140,8 +140,8 @@
 
           </div>
           <vs-row vs-w="12">
-            <vs-col vs-offset="1" vs-w="1" vs-align="center" :style="{paddingTop: '20px'}"><h6>Reason:</h6></vs-col>
-            <vs-col  vs-w="10" vs-type="flex" vs-justify="center" vs-align="center">
+            <vs-col  vs-w="1" vs-align="center" :style="{paddingTop: '20px'}"><h6>Reason:</h6></vs-col>
+            <vs-col  vs-w="11" vs-type="flex" vs-justify="center" vs-align="center">
                 <quill-editor v-model="question.reason" name="answerContent" :style="{marginBottom: '20px'}"></quill-editor>
             </vs-col>
           </vs-row>

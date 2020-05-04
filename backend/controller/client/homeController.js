@@ -57,17 +57,19 @@ exports.getSubjects = async (req,res) => {
 
 exports.getSearchTrakItems = async (req, res) => {
     try {
-        const subjectId = req.params.id;
+        const user = req.body.user;
+        const subjectId = req.body.id;
+        const quizHistories = await QuizResult.find({user: user});
         const subjectInformation = await Subject.findOne({_id:subjectId}).populate('level').populate('category');
         const chapterItems = await Chapter.find({subject:subjectId}).populate('level').populate('category').populate('subject');
-        console.log('chapterItems', chapterItems);
         if(chapterItems.length > 0) {
-            const quizItems = await Quiz.find({chapter:chapterItems[0]._id}).populate('chapter');
+            const quizItems = await Quiz.find({chapter:chapterItems[0]._id, verification: 'checked', status: 'activated'}).populate('chapter');
             if(quizItems.length > 0) {
                 let resData = {
                     subjectInformation: subjectInformation,
                     chapterItems: chapterItems,
-                    quizItems: quizItems
+                    quizItems: quizItems,
+                    quizHistories: quizHistories
                 }
                 return res.status(200).json(resData);
             } else if(quizItems == 0) {
@@ -93,12 +95,15 @@ exports.getSearchTrakItems = async (req, res) => {
 
 exports.updateQuizItem = async(req, res) => {
     try {   
-        const chapterId = req.params.id;
+        const user = req.body.user;
+        const chapterId = req.body.id;
         const chapterItems = await Chapter.findOne({_id:chapterId});
-        const quizItems = await Quiz.find({chapter: chapterId}).populate('chapter');
+        const quizItems = await Quiz.find({chapter: chapterId, verification: 'checked', status: 'activated'}).populate('chapter');
+        const quizHistories = await QuizResult.find({user: user});
         let resData = {
             chapterItems: chapterItems,
-            quizItems: quizItems
+            quizItems: quizItems,
+            quizHistories: quizHistories
         }
         return res.status(200).json(resData);
     } catch(error) {
@@ -116,12 +121,16 @@ exports.getTestItem = async(req, res) => {
     }
 }
 
-exports.saveTestResult = (req, res) => {
+exports.saveTestResult = async(req, res) => {
     let user = req.body.userID;
     let quiz = req.body.quizID;
     let totalMark = req.body.totalMark;
     let guessResult = req.body.guessResult;
     console.log(user, quiz, totalMark, guessResult);
+    let updateQuiz = await Quiz.findOne({_id: quiz});
+    console.log(updateQuiz);
+    updateQuiz.clients.push(user);
+    updateQuiz.save();
     let quizResult = new QuizResult({
         user: user,
         quiz: quiz,

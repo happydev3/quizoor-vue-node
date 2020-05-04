@@ -5,7 +5,8 @@ import {
   GETLEVLEITEMS,
   GETTRACKITEMS,
   UPDATEQUIZITEM,
-  GETESTITEM
+  GETESTITEM,
+  GETALLSUBJECT
 } from './actionType';
 
 import {
@@ -13,6 +14,7 @@ import {
   GETLEVELITEMSSUCCESS,
   GETTRACKITEMSSUCCESS,
   UPDATEQUIZITEMSUCCESS,
+  GETALLSUBJECTSUCCESS
   // GETESTITEMSUCCESS
 } from './mutationType';
 const user  = JSON.parse(localStorage.getItem('user'));
@@ -24,10 +26,12 @@ const state = {
   categories: [],
   chapterItems: [],
   subjectItems: [],
+  localeSubjectItems: [],
   quizItems: [],
   subjectInformation: [],
   chapterSummary: [],
   chapterName: '',
+  quizHistories: []
   // getTestItems: Object
 }
 
@@ -67,6 +71,13 @@ const actions = {
         return res;
       }
     )
+  },
+  [GETALLSUBJECT](context, rdata) {
+    return ClientService.getAllSubjectItems(rdata).then(
+      res => {
+        context.commit(GETALLSUBJECTSUCCESS, res);
+      }
+    )
   }
 }
 
@@ -88,16 +99,18 @@ const mutations = {
       state.quizItems = res.data.quizItems;
       state.chapterSummary = res.data.quizItems[0].chapter.content;
       state.chapterName = res.data.quizItems[0].chapter.name;
+      state.quizHistories = res.data.quizHistories;
     }
   },
   [UPDATEQUIZITEMSUCCESS](state, res) {
     state.quizItems = res.data.quizItems;
     state.chapterSummary = res.data.chapterItems.content;
     state.chapterName = res.data.chapterItems.name;
+    state.quizHistories = res.data.quizHistories;
   },
-  // [GETESTITEMSUCCESS](state, res) {
-  //   state.getTestItems = res.data;
-  // }
+  [GETALLSUBJECTSUCCESS](state, res) {
+    state.localeSubjectItems = res.data;
+  }
 }
 
 export default {

@@ -12,13 +12,13 @@
     </div>
 </template>
 <script>
-import ClientService from '@/services/client.service.js';
+import { GETALLSUBJECT } from '@/store/actionType';
+import { mapState } from 'vuex';
 import 'swiper/dist/css/swiper.min.css'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 export default {
     data() {
         return {
-            subjectItems:[],
             swiperOption: {
                 slidesPerView: 4,
                 slidesPerColumn: 2,
@@ -44,14 +44,20 @@ export default {
             }
         }
     },
+    computed : {
+        ...mapState({
+            subjectItems: state => state.client.localeSubjectItems
+        })
+    },
+    watch: {
+        '$i18n.locale'(val) {
+            let locale = val;
+            this.$store.dispatch(GETALLSUBJECT, locale);
+        },
+    },
     created() {
-        let rdata = this.$i18n.locale;
-        return ClientService.getAllSubjectItems(rdata).then(
-            res => {
-                console.log(res);
-                this.subjectItems = res.data;
-            }
-        );
+        let locale = this.$i18n.locale;
+        this.$store.dispatch(GETALLSUBJECT, locale);
     },
     components: {
         swiper,

@@ -48,7 +48,10 @@ class ClientService {
     )
   }
   getSearchTrakItems(rdata) {
-    return axios.get(API_URL + 'getSearchTrakItems/' + rdata, { headers: authHeader()} ).then(
+    return axios.post(API_URL + 'getSearchTrakItems', {
+      id: rdata.id,
+      user: rdata.user
+    }, { headers: authHeader()} ).then(
       res => {
         return res;
       },
@@ -59,7 +62,10 @@ class ClientService {
   }
 
   updateQuizItem(rdata) {
-    return axios.get(API_URL + 'updateQuizItem/' + rdata, { headers: authHeader() }).then(
+    return axios.post(API_URL + 'updateQuizItem', {
+      id: rdata.id,
+      user: rdata.user
+    }, { headers: authHeader() }).then(
       res => {
         return res;
       },

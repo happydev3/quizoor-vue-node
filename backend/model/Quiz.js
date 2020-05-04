@@ -64,6 +64,9 @@ const QuizSchema = Schema({
             } 
         }
     ],
+    clients: {
+        type: Array
+    },
     create_date: { type:Date, default:Date.now }
 });
 

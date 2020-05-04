@@ -57,7 +57,10 @@
           <ul>
             <li :key="index" v-for="(question, index) in questions">
               <h2 class="question-header"> - question #{{index}}</h2>
-              <div class="question-content" v-html="question.content">{{question.content}}</div>
+              <vx-card :title="question.quizType" title-color="orange">
+                <div class="question-content" v-html="question.content">{{question.content}}</div>
+              </vx-card>  
+              <vx-card v-if="question.quizType == 'multiple' || question.quizType == 'truefalse'">
                 <vs-table hoverFlat class="table-answers" :data="question.answers">
                     <template slot="thead">
                         <vs-th>Answers</vs-th>
@@ -71,6 +74,21 @@
                         </vs-tr>
                     </template>
                 </vs-table>
+              </vx-card>
+              <vx-card v-else-if="question.quizType == 'matching'">
+                <vs-table hoverFlat class="table-answers" :data="question.answers">
+                    <template slot="thead">
+                        <vs-th>Left Side</vs-th>
+                        <vs-th>Right Side</vs-th>
+                    </template>
+                    <template>
+                        <vs-tr :key="i" v-for="(answer, i) in question.answers">
+                            <vs-td v-html="answer.content">{{answer.content}}</vs-td>
+                            <vs-td v-html="answer.value">{{answer.value}}</vs-td>
+                        </vs-tr>
+                    </template>
+                </vs-table>
+              </vx-card>
             </li>
           </ul>
         </div>
@@ -116,11 +134,40 @@ export default {
         this.user = res.data.user.firstname + ' ' + res.data.user.lastname;
         this.status = res.data.status;
         this.verification = res.data.verification;
-        this.questions = res.data.questions;
-      },
-      error => {
-        console.log(error);
-      }
+        let tempQuiz = [];
+        let questions = [];
+        res.data.questions.map(function(question) {
+          let quizType = question.quizType;
+          let content =question.content;
+          let mark = question.mark;
+          let reason = question.reason;
+          let tempAnswers = [];
+          question.answers.map(function(item){
+              let tvalue = undefined;
+              if(item.value == 'true') {
+                  tvalue = true
+              } else if(item.value == 'false') {
+                  tvalue = false
+              } else {
+                  tvalue = item.value;
+              }
+              tempAnswers.push({
+                  content: item.content,
+                  value: tvalue
+              })
+          })
+          let answers = tempAnswers;
+              tempQuiz.push({
+                  quizType: quizType,
+                  content: content,
+                  mark: mark,
+                  answers: answers,
+                  reason: reason
+              })
+          questions = tempQuiz;
+          })
+        this.questions = questions;
+      } 
     )
   },
   methods: {
