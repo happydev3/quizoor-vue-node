@@ -79,5 +79,32 @@ class ClientService {
       }
     )
   }
+
+  saveTestResult(rdata) {
+    return axios.post(API_URL + 'saveTestResult', {
+      userID: rdata.userID,
+      quizID: rdata.quizID,
+      totalMark: rdata.totalMark,
+      guessResult: rdata.totalPerfectResult
+    }, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
+
+  getAllSubjectItems(rdata) {
+    return axios.get(API_URL + 'getAllSubjectItems/' + rdata, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
 }
 export default new ClientService();

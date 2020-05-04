@@ -42,6 +42,11 @@ const router = new Router({
                     path: 'test/:id',
                     name: 'test',
                     component: () => import('./views/client/Test.vue')
+                },
+                {
+                    path: 'choose-subject',
+                    name: 'choose-subject',
+                    component: () => import('./views/client/ChooseSubject.vue')
                 }
             ]
         },

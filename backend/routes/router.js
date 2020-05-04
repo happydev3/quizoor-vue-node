@@ -80,6 +80,7 @@ router.get('/getSubjects/:id', homeController.getSubjects);
 router.get('/getSearchTrakItems/:id', auth, homeController.getSearchTrakItems);
 router.get('/updateQuizItem/:id', auth, homeController.updateQuizItem);
 router.get('/getTestItem/:id', auth, homeController.getTestItem);
-
+router.post('/saveTestResult', auth, homeController.saveTestResult);
+router.get('/getAllSubjectItems/:id', auth, homeController.getAllSubjectItems);
 
 module.exports = router;

@@ -7,22 +7,22 @@
                 <p>
                     {{$t('school_university_subjects')}}
                 </p>
-                <a href="/Subjects">
-                    <button class="general-btn yellow-btn">
-                        {{$t('chooseSubject')}}
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="20"
-                            height="10"
-                            viewBox="0 0 20 10"
-                        >
-                            <path
-                                id="black-arrow"
-                                d="M15.012,3.75H0v2.5H15.012V10L20,5,15.012,0Z"
-                            ></path>
-                        </svg>
-                    </button>
-                </a>
+               
+                <button @click="$router.push('/choose-subject')" class="general-btn yellow-btn">
+                    {{$t('chooseSubject')}}
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="10"
+                        viewBox="0 0 20 10"
+                    >
+                        <path
+                            id="black-arrow"
+                            d="M15.012,3.75H0v2.5H15.012V10L20,5,15.012,0Z"
+                        ></path>
+                    </svg>
+                </button>
+              
             </div>
         </div>
     </div>

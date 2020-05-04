@@ -119,7 +119,6 @@ export default {
     .testResultField {
         display: block;
         width: 30%;
-        justify-content: flex-end;
     }
     .quizName {
         font-weight: 600;

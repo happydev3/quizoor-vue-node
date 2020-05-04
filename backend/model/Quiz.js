@@ -44,10 +44,11 @@ const QuizSchema = Schema({
     },
     questions: [
         {
-            content: {
-                type: Object
+            quizType: {
+                type: String,
+                // required: true
             },
-            image: {
+            content: {
                 type: Object
             },
             mark: {
@@ -56,8 +57,11 @@ const QuizSchema = Schema({
             },
             answers: [{
                 content: { type: Object },
-                value: { type: Boolean, default: false }
-            }] 
+                value: { type: String }
+            }],
+            reason: {
+                type: Object
+            } 
         }
     ],
     create_date: { type:Date, default:Date.now }

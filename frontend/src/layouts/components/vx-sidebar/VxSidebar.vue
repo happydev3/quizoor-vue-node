@@ -6,7 +6,7 @@
                 <div class="header-sidebar flex items-end justify-between" slot="header">
                     <div class="logo flex items-center">
                         <img :src="logo" alt="logo" class="w-10 mr-4" v-if="logo && sidebarItemsMin">
-                        <img :src="logo" alt="logo" :style="{marginLeft: '20px'}" v-if="logo && !sidebarItemsMin">
+                        <img :src="logo" alt="logo" :style="{marginLeft: '20px' ,width: '120px'}" v-if="logo && !sidebarItemsMin">
                     </div>
                     <div>
                         <template v-if="showCloseButton">

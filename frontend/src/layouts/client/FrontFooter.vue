@@ -3,7 +3,7 @@
       <div class="footer__container container">
         <div class="footer__left-part">
           <div class="footer__logo">
-            <img :src="titleImg" alt="Quizoor" draggable="false" />
+            <img class="titleImg" :src="titleImg" alt="Quizoor" draggable="false" />
           </div>
           <div class="footer__copyright">
             <p>© quizoor | {{ new Date().getFullYear() }}</p>

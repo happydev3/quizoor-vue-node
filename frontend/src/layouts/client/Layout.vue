@@ -58,8 +58,10 @@
                 <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="10">
                   <vs-collapse accordion>
                     <h4 class="searchItemHeader">subject</h4>
-                    <li class="searchItemField" :key="index" v-for="(subject,index) in searchItemSubjects" >
-                      <router-link :to="'/track/' + subject._id" :style="{fontSize: '1rem', padding: '3px'}">{{subject.name}}</router-link>
+                    <li class="searchItemField" :key="index" v-for="(subject,index) in searchItemSubjects" @click="moveTrack(subject._id)">
+                      <!-- <router-link :to="'/track/' + subject._id" :style="{fontSize: '1rem', padding: '3px'}"> -->
+                      {{subject.name}}
+                      <!-- </router-link> -->
                     </li>
                   </vs-collapse>
                 </vs-col>
@@ -197,6 +199,10 @@ export default {
       )
     },
     moveTrack(id) {
+      document.getElementById('toggleLevelMenu').style.display = 'none';
+      this.isLevelMenu == false;
+      this.categoryMenuCheck = false;
+      this.subjectMenuCheck = false;
       this.$router.push('/track/' + id);
     }
   },

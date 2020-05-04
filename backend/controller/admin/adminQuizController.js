@@ -32,19 +32,31 @@ exports.addQuiz = (req, res) => {
     req.body.questions.map(function(question){
         let content = question.content;
         let mark = question.mark;
+        let quizType = question.quizType;
+        let reason = question.reason;
         let answers = [];
         let tempAnswers = [];
         question.answers.map(function(item){
+            let tvalue = '';
+            if(item.value == true) {
+                tvalue = 'true'
+            } else if(item.value == undefined) {
+                tvalue = 'false'
+            } else {
+                tvalue = item.value;
+            }
             tempAnswers.push({
                 content: item.content,
-                value: item.value
+                value: tvalue
             })
         })
         answers = tempAnswers;
         tempQuiz.push({
+            quizType: quizType,
             content: content,
             mark: mark,
-            answers: answers
+            answers: answers,
+            reason: reason
         })
     })
     quiz.questions = tempQuiz;
@@ -240,62 +252,55 @@ exports.checkVerify = (req, res) => {
 
 exports.editQuiz = async (req, res) => {
     console.log(req.body);
-    let id = req.body.quizID;
-    let name = req.body.name;
-    let difficulty = req.body.difficulty;
-    let level = req.body.level;
-    let category = req.body.category;
-    let subject = req.body.subject;
-    let chapter = req.body.chapter;
-    let questions = req.body.questions;
-    Quiz.findByIdAndUpdate(id, { name: name, difficulty: difficulty, level: level, category: category, subject: subject, chapter: chapter, questions: questions }).then(
+    const id = req.body.quizID;
+    let quiz = await Quiz.findOne({_id: id});
+    console.log('>>>>>>>>>>>>>>>', quiz);
+    quiz.name = req.body.name;
+    quiz.difficulty = req.body.difficulty;
+    quiz.user = req.body.user;
+    quiz.level = req.body.level;
+    quiz.chapter = req.body.chapter;
+    quiz.subject = req.body.subject;
+    quiz.category = req.body.category;
+    let tempQuiz = [];
+    req.body.questions.map(function(question){
+        let content = question.content;
+        let mark = question.mark;
+        let quizType = question.quizType;
+        let reason = question.reason;
+        let answers = [];
+        let tempAnswers = [];
+        question.answers.map(function(item){
+            let tvalue = '';
+            if(item.value == true) {
+                tvalue = 'true'
+            } else if(item.value == undefined) {
+                tvalue = 'false'
+            } else {
+                tvalue = item.value;
+            }
+            tempAnswers.push({
+                content: item.content,
+                value: tvalue
+            })
+        })
+        answers = tempAnswers;
+        tempQuiz.push({
+            quizType: quizType,
+            content: content,
+            mark: mark,
+            answers: answers,
+            reason: reason
+        })
+    })
+    quiz.questions = tempQuiz;
+    quiz.save().then(
         quiz => {
-            return res.status(200).json({message: 'successfully updated'})
+            return res.status(200).json({message: 'successfully updated'});
         }
     ).catch(
         error => {
-            return res.status(201).json({message: error})
+            return res.status(400).json({message: error});
         }
-    )
-    // console.log(req.body);
-    // const id = req.body.quizID;
-    // let quiz = await Quiz.findOne({_id: id});
-    // console.log('>>>>>>>>>>>>>>>', quiz);
-    // quiz.name = req.body.name;
-    // quiz.difficulty = req.body.difficulty;
-    // quiz.user = req.body.user;
-    // quiz.level = req.body.level;
-    // quiz.chapter = req.body.chapter;
-    // quiz.subject = req.body.subject;
-    // quiz.category = req.body.category;
-    // let tempQuiz = [];
-    // req.body.questions.map(function(question){
-    //     let content = question.content;
-    //     let mark = question.mark;
-    //     let answers = [];
-    //     let tempAnswers = [];
-    //     question.answers.map(function(item){
-    //         tempAnswers.push({
-    //             content: item.content,
-    //             value: item.value
-    //         })
-    //     })
-    //     answers = tempAnswers;
-    //     tempQuiz.push({
-    //         content: content,
-    //         mark: mark,
-    //         answers: answers
-    //     })
-    // })
-    // quiz.questions = tempQuiz;
-    // quiz.save().then(
-    //     quiz => {
-    //         console.log('_____________quiz________________',quiz);
-    //         return res.status(200).json({message: 'Quiz updated successfully'});
-    //     }
-    // ).catch(
-    //     error => {
-    //         return res.status(400).json({message: error});
-    //     }
-    // );
+    );
 }

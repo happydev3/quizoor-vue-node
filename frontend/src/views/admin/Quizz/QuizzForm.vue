@@ -72,39 +72,82 @@
             </h3>
             <vs-button color="danger" type="filled" icon-pack="feather" icon="icon-archive" @click="deleteQuestion(index)"></vs-button>
           </div>
-          <quill-editor v-model="question.content" :style="{marginBottom: '20px'}"></quill-editor>
-          <vs-input-number v-validate="'required'" min="1" max="5" color="success" v-model="question.mark"/>
-          <div class="vx-col w-full between-field" :key="i" v-for="(answer, i) in question.answers">
-            <vs-row vs-w="12" :style="{marginTop: '15px'}" v-if="windowWidth>1024">
-              <vs-col vs-offset="1" vs-w="1" vs-align="center" :style="{paddingTop: '20px'}"><h6>Answer{{i+1}}:</h6></vs-col>
-              <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="8">
-                <quill-editor v-model="answer.content" name="answerContent" v-validate="'required'"></quill-editor>
-                <!-- <vs-textarea v-model="answer.content" name="answerContent" v-validate="'required'"/> -->
-              </vs-col>
-              <vs-col vs-w="2" vs-align="center">
-                <div :style="{paddingTop: '20px', display: 'flex', justifyContent: 'space-between'}">
-                  <vs-checkbox v-model="answer.value">Is this right?</vs-checkbox>
-                  <vs-button color="warning" type="filled" icon-pack="feather" icon="icon-archive" @click="deleteAnswer(index, i)"></vs-button>
-                  <!-- <vs-button color="warning" size="small" type="filled" @click="deleteAnswer(index, i)" :style="{padding: '0.5rem'}">X</vs-button> -->
-                </div>
-              </vs-col>
-            </vs-row>
-            <!-- mobile responsive -->
-            <vs-row vs-offset="1" vs-w="12" :style="{marginTop: '15px'}" v-if="windowWidth<=1024">
-              <vs-col vs-w="12" vs-align="center" :style="{marginBottom: '10px'}"><h6>Answer{{i+1}}:</h6></vs-col>
-              <vs-col vs-w="12" vs-type="flex" vs-justify="center" vs-align="center">
-                <quill-editor v-model="answer.content" name="answerContent" v-validate="'required'" :style="{marginBottom: '0px'}"></quill-editor>
-                <!-- <vs-textarea v-model="answer.content" name="answerContent" v-validate="'required'" :style="{marginBottom: '0px'}"/> -->
-                <vs-button color="warning" type="filled" icon-pack="feather" icon="icon-archive" @click="deleteAnswer(index, i)" :style="{marginLeft: '10px'}"></vs-button>
-                <!-- <vs-button color="warning" size="small" type="filled" @click="deleteAnswer(index, i)" :style="{marginLeft: '10px', padding: '0.5rem'}">X</vs-button> -->
-              </vs-col>
-              <vs-col vs-w="12" vs-sm="12" vs-align="center" :style="{marginTop: '10px'}">
-                  <vs-checkbox v-model="answer.value">Is this right?</vs-checkbox>
-              </vs-col>
-            </vs-row>
+
+          <!-- option -->
+
+          <div class="optionsField" >
+            <vs-button v-for="(item, j) in options" :key="j" :color="'#9ecc38'" :class="'optionField' + j" type="flat">
+                <img class="optionImg" :src="require('@/assets/images/logo/option' + j + '.webp')" @click="selectOption(item.value, index)"/><br/>
+                <span>{{item.label}}</span>
+            </vs-button>
           </div>
+
+          <quill-editor class="editor" v-model="question.content" :style="{marginBottom: '20px'}"></quill-editor>
+          <vs-input-number class="mark" v-validate="'required'" min="1" max="5" color="success" v-model="question.mark"/>
+          <div class="vx-col w-full between-field" :key="i" v-for="(answer, i) in question.answers">
+
+            <div v-if="questions[index].quizType == 'multiple'">
+              <vs-row vs-w="12" :style="{marginTop: '15px'}" v-if="windowWidth>1024">
+                <vs-col vs-offset="1" vs-w="1" vs-align="center" :style="{paddingTop: '20px'}"><h6>{{answerHeader[i]}}:</h6></vs-col>
+                <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="8">
+                  <quill-editor v-model="answer.content" name="answerContent" v-validate="'required'"></quill-editor>
+                </vs-col>
+                <vs-col vs-w="2" vs-align="center">
+                  <div :style="{paddingTop: '20px', display: 'flex', justifyContent: 'space-between'}">
+                    <vs-checkbox v-model="answer.value">Is this right?</vs-checkbox>
+                    <vs-button color="warning" type="filled" icon-pack="feather" icon="icon-archive" @click="deleteAnswer(index, i)"></vs-button>
+                  </div>
+                </vs-col>
+              </vs-row>
+              <!-- mobile responsive -->
+              <vs-row vs-offset="1" vs-w="12" :style="{marginTop: '15px'}" v-if="windowWidth<=1024">
+                <vs-col vs-w="12" vs-align="center" :style="{marginBottom: '10px'}"><h6>{{answerHeader[i]}}:</h6></vs-col>
+                <vs-col vs-w="12" vs-type="flex" vs-justify="center" vs-align="center">
+                  <quill-editor v-model="answer.content" name="answerContent" v-validate="'required'" :style="{marginBottom: '0px'}"></quill-editor>
+                  <vs-button color="warning" type="filled" icon-pack="feather" icon="icon-archive" @click="deleteAnswer(index, i)" :style="{marginLeft: '10px'}"></vs-button>
+                </vs-col>
+                <vs-col vs-w="12" vs-sm="12" vs-align="center" :style="{marginTop: '10px'}">
+                    <vs-checkbox v-model="answer.value">Is this right?</vs-checkbox>
+                </vs-col>
+              </vs-row>
+            </div>
+
+            <div v-if="questions[index].quizType == 'truefalse'">
+              <vs-row vs-align="center" vs-type="flex" vs-justify="center" vs-w="12" :style="{marginTop: '15px'}">
+                <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="12">
+                  <vs-col  vs-w="1" vs-align="center" :style="{paddingBottom: '10px'}"><h6>{{answerHeader[i]}}:</h6></vs-col>
+                  <vs-input vs-offset="2" vs-w="8" v-model="answer.content" />
+                  <vs-checkbox v-model="answer.value">Is this right?</vs-checkbox>
+                </vs-col>
+              </vs-row>
+            </div>
+
+            <div v-if="questions[index].quizType == 'matching'"> 
+              <vs-row vs-w="12">
+                <vs-col vs-w="1" vs-align="center" :style="{paddingTop: '20px'}"><h6>{{answerHeader[i]}}:</h6></vs-col>
+                <vs-col  vs-w="5" vs-type="flex" vs-justify="center" vs-align="center">
+                    <quill-editor v-model="answer.content" name="answerContent" :style="{marginBottom: '20px'}"></quill-editor>
+                </vs-col>
+                <vs-col vs-w="1"><img class="arrowIcon" :src="arrow" /></vs-col>
+                <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
+                  <vs-textarea label="matching..." v-model="answer.value" :style="{marginBottom: '20px'}"/>
+                </vs-col>
+                <vs-col vs-w="1">
+                  <vs-button :style="{marginTop: '45px'}" color="warning" type="filled" icon-pack="feather" icon="icon-archive" @click="deleteAnswer(index, i)"></vs-button>
+                </vs-col>
+              </vs-row>
+            </div>
+
+          </div>
+          <vs-row vs-w="12">
+            <vs-col vs-offset="1" vs-w="1" vs-align="center" :style="{paddingTop: '20px'}"><h6>Reason:</h6></vs-col>
+            <vs-col  vs-w="10" vs-type="flex" vs-justify="center" vs-align="center">
+                <quill-editor v-model="question.reason" name="answerContent" :style="{marginBottom: '20px'}"></quill-editor>
+            </vs-col>
+          </vs-row>
           <div class="button-area">
-              <vs-button color="success" type="border" :key="index" @click="addAnswer(index)"> + Add Answer</vs-button>
+              <vs-button color="success" type="border" :key="index" @click="addAnswer(index)" :disabled="questions[index].quizType == 'truefalse' && questions[index].answers.length > 1"> + Add Answer</vs-button>
+              <vs-button color="success" type="border" :key="index+1" @click="addAnswerGroup(index)" :disabled="questions[index].quizType == 'truefalse' && questions[index].answers.length > 1"> + Add Answer Group</vs-button>
           </div>
         </vs-card>
 
@@ -118,6 +161,7 @@
 </template>
 
 <script>
+import vSelect from 'vue-select'
 import { FormWizard, TabContent } from 'vue-form-wizard';
 import { mapState } from 'vuex';
 import 'vue-form-wizard/dist/vue-form-wizard.min.css';
@@ -125,7 +169,7 @@ import AdminService from '@/services/admin.service.js';
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
-
+import arrow from '@/assets/images/pages/arrow.png';
 import { quillEditor } from 'vue-quill-editor';
 import { GETLEVEL, LEVELSELECT, CATEGORYSELECT, SUBJECTSELECT } from '@/store/actionType';
 
@@ -135,6 +179,7 @@ String.prototype.isEmpty = function() {
 export default {
   data() {
     return {
+      isActive: undefined,
       level: "",
       levels: [],
       category: "",
@@ -153,7 +198,16 @@ export default {
       questions: [],
       content: `...`,
       answers: [],
-      QuizID: ''
+      QuizID: '',
+      options : [
+        {value: 'multiple', label: 'Multiple choice'},
+        {value: 'truefalse', label: 'True or false'},
+        {value: 'matching', label: 'Matching'}
+      ],
+      answerHeader: [
+        'A', 'B', 'C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'
+      ],
+      arrow: arrow
     }
   },
   computed: {
@@ -196,8 +250,41 @@ export default {
         this.category = res.data.category._id;
         this.subject = res.data.subject._id;
         this.chapter = res.data.chapter._id;
-        this.questions = res.data.questions;
         this.difficulty = res.data.difficulty;
+        // this.questions = res.data.questions;
+        let tempQuiz = [];
+        let questions = [];
+        res.data.questions.map(function(question) {
+          let quizType = question.quizType;
+          let content =question.content;
+          let mark = question.mark;
+          let reason = question.reason;
+          let tempAnswers = [];
+          question.answers.map(function(item){
+            let tvalue = undefined;
+            if(item.value == 'true') {
+                tvalue = true
+            } else if(item.value == 'false') {
+                tvalue = false
+            } else {
+                tvalue = item.value;
+            }
+            tempAnswers.push({
+                content: item.content,
+                value: tvalue
+            })
+          })
+          let answers = tempAnswers;
+            tempQuiz.push({
+            quizType: quizType,
+            content: content,
+            mark: mark,
+            answers: answers,
+            reason: reason
+            })
+          questions = tempQuiz;
+        })
+         this.questions = questions;
       },
       error => {
         console.log(error)
@@ -265,6 +352,7 @@ export default {
                 difficulty: this.difficulty,
                 questions: this.questions,
               } 
+              console.log('______quiz edit data_____', rdata);
               return AdminService.editQuiz(rdata).then(
                 res => {
                   if(res.data.message == 'successfully updated') {
@@ -285,6 +373,7 @@ export default {
                 difficulty: this.difficulty,
                 questions: this.questions,
               }
+              console.log('______quiz add data_____', rdata);
               return AdminService.addQuiz(rdata).then(
                 res => {
                   if(res.data.message == 'Quiz added successfully') {
@@ -309,14 +398,72 @@ export default {
       this.questions.push({
           content : '',
           mark: 1,
-          answers : []
+          quizType: '',
+          answers : [],
+          reason: ''
       })
     },
+    selectOption(data, index) {
+      this.questions[index].quizType = data;
+      this.isActive == true;
+      this.questions[index].answers = [];
+      console.log(this.questions[index].quizType);
+    },
     addAnswer(index) {
-      this.questions[index].answers.push({
-        content: '',
-        value: undefined
-      })
+      if(this.questions[index].quizType == '') {
+        this.$vs.notify({ title: 'Please select quesion type', color:'warning', position:'top-right' });
+      } else {
+        if (this.questions[index].quizType == 'multiple') {
+          this.questions[index].answers.push({
+            content: '',
+            value: undefined
+          })
+        } else if (this.questions[index].quizType == 'truefalse') {
+          this.questions[index].answers.push({
+            content: 'true',
+            value: undefined
+          });
+          this.questions[index].answers.push({
+            content: 'false',
+            value: undefined
+          })
+        } else if(this.questions[index].quizType == 'matching') {
+          this.questions[index].answers.push({
+            content: '',
+            value: ''
+          });
+        }
+      }
+    },
+    addAnswerGroup(index) {
+      if(this.questions[index].quizType == '') {
+        this.$vs.notify({ title: 'Please select quesion type', color:'warning', position:'top-right' });
+      } else {
+        if (this.questions[index].quizType == 'multiple') {
+          for (let i=0; i<4; i++) {
+            this.questions[index].answers.push({
+              content: '',
+              value: undefined
+            })
+          }
+        } else if (this.questions[index].quizType == 'truefalse') {
+          this.questions[index].answers.push({
+            content: 'true',
+            value: undefined
+          });
+          this.questions[index].answers.push({
+            content: 'false',
+            value: undefined
+          })
+        } else if(this.questions[index].quizType == 'matching') {
+          for (let i=0; i<4; i++){
+            this.questions[index].answers.push({
+              content: '',
+              value: ''
+            });
+          }
+        }
+      }
     },
     deleteQuestion(index) {
       if (this.questions.length <= 1) return;
@@ -325,12 +472,13 @@ export default {
     deleteAnswer(index, i) {
       if(this.questions[index].answers<=1) return;
       this.questions[index].answers.splice(i, 1);
-    }
+    },
   },
   components: {
     FormWizard,
     TabContent,
     quillEditor,
+    'v-select': vSelect
   }
 }
 </script>
@@ -341,5 +489,65 @@ export default {
   .button-area {
     padding: 10px;
     text-align: center;
+  }
+  .editor {
+    height: 300px !important;
+  }
+  .mark {
+    margin-top: 70px;
+  }
+  @media(max-width: 767px) and (min-width: 588px) {
+    .mark {
+      margin-top: 100px;
+    }
+  }
+  @media(max-width: 587px) and (min-width: 457px) {
+    .mark {
+      margin-top: 120px;
+    }
+  }
+  @media(max-width: 456px) and (min-width: 418px) {
+    .mark {
+      margin-top: 150px;
+    }
+  }
+  @media(max-width: 417px) {
+    .mark {
+      margin-top: 180px;
+    }
+  }
+  .optionsField {
+    text-align: center;
+    margin-left: 15%; 
+    width: 70%;
+    display: flex;
+    padding: 10px;
+  }
+  .optionField0,
+  .optionField1,
+  .optionField2 {
+    cursor: pointer;
+    border-radius: 5px;
+    width: 30%;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 10px;
+    background-color: rgb(238, 232, 232);
+  }
+  .optionField active {
+    background:green;
+  }
+  .optionImg {
+    height: 20px;
+  }
+  @media(max-width: 650px) {
+    .optionsField {
+      width: 100%;
+      margin-left: 0%;
+    }
+  }
+  .arrowIcon {
+    width: 40px;
+    margin-top: 45px;
   }
 </style>

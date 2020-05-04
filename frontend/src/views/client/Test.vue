@@ -3,9 +3,9 @@
     <div class="container">
         <header class="quiz__top">
             <h3 class="track__title">{{name}}</h3>
-            <vs-progress :height="12" :percent='this.percent' color="primary"></vs-progress>
         </header>
-        <div class="quiz__inner">
+        <div class="quiz__inner" v-if="popupActive == false">
+            <vs-progress :height="12" :percent='this.percent' color="primary"></vs-progress>
             <div>
                 <div class="quiz__inner-header" v-html="questions[questionIndex].content">{{questions[questionIndex].content}}</div>
                 <ul>
@@ -36,8 +36,7 @@
             </div>
             <div class="quiz__inner--footer">
                 <div class="send-right">
-                   <vs-button class="submitBtn" color="red" type="filled" icon-pack="feather" icon="icon-check" :style="{marginRight:'5px'}" @click="submitAnswer(questionIndex)" v-if="isClick == true" disabled>Submit</vs-button>
-                   <vs-button class="submitBtn" color="red" type="filled" icon-pack="feather" icon="icon-check" :style="{marginRight:'5px'}" @click="submitAnswer(questionIndex)" v-if="isClick == false">Submit</vs-button>
+                   <vs-button class="submitBtn" color="red" type="filled" icon-pack="feather" icon="icon-check" :style="{marginRight:'5px'}" @click="submitAnswer(questionIndex)" :disabled="isClick == true">Submit</vs-button>
                     <div class="next">
                         <vs-button color="primary" type="filled" v-if="questionIndex != totalResult-1 && isClick == false" disabled>Next question
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="10" viewBox="0 0 20 10">
@@ -63,13 +62,37 @@
                 </div>
             </div>
         </div>
-			
+		<div class="demo-alignment" v-if="popupActive == true">
+            <div class="vx-col w-full mb-base correct-answer-field" v-for="(question, index) in questions" :key="index">
+                <vx-card>
+                    <p v-html="question.content">{{question.content}}</p>
+                    <table style="width:100%" class="border-collapse">
+                        <tr>
+                            <th class="p-2 border border-solid d-theme-border-grey-light correct-answer-header">Answers</th>
+                            <th class="p-2 border border-solid d-theme-border-grey-light">value</th>
+                        </tr>
+                        <tr v-for="(answer, i) in question.answers" :key="i">
+                            <td class="p-2 border border-solid d-theme-border-grey-light" v-html="answer.content">{{answer.content}}</td>
+                            <td class="p-2 border border-solid d-theme-border-grey-light" :style="[answer.value == true ? {color: 'green'} : {color: 'red'}]">{{answer.value}}</td>
+                        </tr>
+                    </table>
+                </vx-card>
+            </div>
+            <div>
+                <h4>Your score: {{this.totalMark}}</h4>
+                <h4>Your guessing result: {{this.totalPerfectResult}}</h4>
+            </div>
+            <div class="Gohome">
+                <vs-button class="submitBtn" color="red" type="filled" icon-pack="feather" icon="icon-check" @click="goHome">Go Home</vs-button>
+            </div>
+        </div>
 	</div>
 </section>
 </template>
 <script>
 import { GETESTITEM } from '@/store/actionType';
-// import { mapState } from 'vuex';
+import ClientService from '@/services/client.service.js'
+import { mapState } from 'vuex';
 export default {
  data() {
      return {
@@ -81,13 +104,19 @@ export default {
          totalResult: 0,
          percent: 0,
          isClick: false,
-         isWrong: false
+         isWrong: false,
+         totalMark: 0,
+         totalPerfectResult: 0,
+         popupActive: false
      }
  },
  computed: {
-    //  ...mapState({
-    //      testQuizItems: state => state.client.getTestItems
-    //  })
+     quizID() {
+         return this.$router.currentRoute.params.id;
+     },
+     ...mapState({
+         userID: state => state.auth.initialState.user.user._id
+     })
  },
  created() {
      const quizId = this.$router.currentRoute.params.id;
@@ -140,9 +169,11 @@ export default {
         } else {
             getMark = 0;
         } 
+        this.totalMark = this.totalMark + getMark;
         console.log('rightCounter', rightCounter);
         if(rightAnswer == rightCounter) {
             if (wrongCounter == 0) {
+                this.totalPerfectResult++;
                 this.$vs.notify({ time:9000, title:'Congratulation! You are correct!', text: 'You selected all right answers and get' + ' ' +  getMark + ' ' + 'mark', color:'success', position:'top-center' })
             } else if (wrongCounter > 0) {
                 this.isWrong = true;
@@ -157,9 +188,28 @@ export default {
                 this.$vs.notify({time:9000,  title:'You are wrong!', text: 'You guessed nothing and get 0 mark', color:'danger', position:'top-center' })
             }
         }
+        console.log('these are total perfect result and total Mark', this.totalPerfectResult, this.totalMark);
     },
     viewDetail() {
-        console.log();
+        if (this.questionIndex == this.totalResult - 1) {
+            this.popupActive = true;
+        }
+    },
+    goHome() {
+        let rdata = {
+            quizID: this.quizID,
+            userID: this.userID,
+            totalMark: this.totalMark,
+            totalPerfectResult: this.totalPerfectResult
+        }
+        console.log(rdata);
+        return ClientService.saveTestResult(rdata).then(
+            res => {
+                console.log(res);
+                this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
+                this.$router.go(-1);
+            }
+        );
     }
  }  
 }
@@ -174,6 +224,11 @@ export default {
     }
     .correct-answer-field {
         transition: opacity 1s;
+    }
+    .Gohome {
+        width: 100%;
+        display: flex;
+        justify-content: end;
     }
 </style>
 	

@@ -5,6 +5,7 @@ const Category = require('../../model/Catetory');
 const Subject = require('../../model/Subject');
 const Chapter = require('../../model/Chapter');
 const Quiz = require('../../model/Quiz');
+const QuizResult = require('../../model/QuizResult');
 
 exports.getSearchValue = async (req, res) => {
     try {
@@ -113,4 +114,50 @@ exports.getTestItem = async(req, res) => {
     } catch(error) {
         return res.status(404).json(error);
     }
+}
+
+exports.saveTestResult = (req, res) => {
+    let user = req.body.userID;
+    let quiz = req.body.quizID;
+    let totalMark = req.body.totalMark;
+    let guessResult = req.body.guessResult;
+    console.log(user, quiz, totalMark, guessResult);
+    let quizResult = new QuizResult({
+        user: user,
+        quiz: quiz,
+        totalMark: totalMark,
+        guessResult: guessResult
+    });
+    quizResult.save().then(
+        quizResult  => {
+            return res.status(200).json({message: 'Result saved Successfully'});
+        }
+    ).catch (
+        error => {
+            return res.status(400).json({message: error});
+        }
+    );
+}
+
+exports.getAllSubjectItems = async (req, res) => {
+    console.log(req.params.id);
+    let locale = req.params.id;
+    let levels = await Level.find({location: locale});
+    let templevelIds = [];
+    levels.map(function(level) {
+        templevelIds.push(level._id);
+    });
+    let levelIds = templevelIds;
+    Subject.find({level: {$in: levelIds}}).then(
+        subject => {
+            console.log('+++++++++______++++++++',subject);
+            return res.status(200).json(subject);
+        }
+    ).catch(
+        error => {
+            return res.status(400).json({message:error});
+        }
+    )
+    console.log(levels);
+
 }
