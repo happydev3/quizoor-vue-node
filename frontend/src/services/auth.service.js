@@ -16,7 +16,7 @@ class AuthService {
             return response;
           },
           error => {
-            console.log('_______________________err_____________________________',error)
+            return error;
           }
       )
   }
@@ -40,7 +40,7 @@ class AuthService {
             return response;
         },
         error => {
-          console.log('_______________________err_____________________________',error)
+          return error;
         }
     )
   }

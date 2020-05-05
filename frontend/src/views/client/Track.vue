@@ -15,29 +15,51 @@
                 </ul>
             </vs-card>
         </vs-col>
+        
+    
         <vs-col vs-lg="8" vs-sm="12" vs-xs="12">
-            <vs-card>
-                <div slot="header">
-                    <h3 class="chapterSummaryheader">
-                        Chapter Summnary
-                    </h3>
-                </div>
-                <div class="chapterSummary" v-html="chapterSummary">{{chapterSummary}}</div>
-            </vs-card>
-            <vs-card v-for="(quizItem, index) in quizItems" :key="index">
-                <div class="chapterItemField">
-                    <div class="quizInformation">
-                        <h3 class="quizName">{{quizItem.name}}</h3>
-                        <vs-chip class="quizDifficulty" :color="getDifficultyColor(quizItem.difficulty)">{{quizItem.difficulty}}</vs-chip>
-                    </div>
-                    <div class="testResultField">
-                        <h5 class="completed">completed</h5>
-                        <h5 class="testResult">result</h5>
-                        <h5 class="questionNumber">Question Numbers</h5>
-                        <vs-button class="startTest" type="gradient" @click="quizEnter(quizItem._id)">Start test</vs-button>
-                    </div>
-                </div>
-            </vs-card>
+            <vs-tabs >
+                <vs-tab label="Chapter Summary">
+                    <vs-card>
+                        <div slot="header">
+                            <h3 class="chapterSummaryheader">
+                                Chapter Summnary
+                            </h3>
+                        </div>
+                        <div class="chapterSummary" v-html="chapterSummary">{{chapterSummary}}</div>
+                    </vs-card>
+                </vs-tab>
+
+                <vs-tab label="Quizes">
+                 <vs-card v-for="(quizItem, index) in quizItems" :key="index">
+                        <div class="chapterItemField">
+                            <div class="quizInformation">
+                                <vs-row>
+                                    <h3 class="quizName">{{quizItem.name}}</h3>
+                                </vs-row>
+                                <vs-row>
+                                    <vs-chip class="quizDifficulty" :color="getDifficultyColor(quizItem.difficulty)">{{quizItem.difficulty}}</vs-chip>
+                                </vs-row>
+                                <vs-row :style="{marginTop: '10px'}">
+                                    <vs-chip color="warning">
+                                        <vs-avatar />
+                                        {{quizItem.author}}
+                                    </vs-chip>
+                                </vs-row>
+                            </div>
+                            <div class="testResultField">
+                                <vs-button v-if="quizItem.completed == true" :color="rxColor" type="flat" icon-pack="feather" icon="icon-check" :style="{fontWeight: '600', paddingLeft: '0rem', paddingRight: '0rem'}">completed</vs-button>
+                                <h5 class="testResult">result: {{quizItem.totalMark}}</h5>
+                                <h5 class="questionNumber">{{quizItem.guessResult}}/{{quizItem.questionNumbers}} questions</h5>
+                                <vs-button color="danger" type="gradient" @click="quizEnter(quizItem._id)" v-if="quizItem.completed == true">Pass again</vs-button>
+                                <vs-button class="startTest" type="gradient" @click="quizEnter(quizItem._id)" v-if="quizItem.completed == false">Start test</vs-button>
+                            </div>
+                        </div>
+                    </vs-card>
+                </vs-tab>
+            </vs-tabs>
+           
+           
         </vs-col>
     </vs-row>
 </div>
@@ -46,10 +68,13 @@
 <script>
 import { GETTRACKITEMS, UPDATEQUIZITEM } from '@/store/actionType.js';
 import { mapState } from 'vuex';
+import { completedIcon } from '@/assets/images/logo/completed.png';
 export default {
     data() {
         return {
-            subjectId: null
+            subjectId: null,
+            completedIcon: completedIcon,
+            rxColor: 'rgb(115, 1, 255)',
         }
     },
     computed: {
@@ -70,7 +95,6 @@ export default {
             else if(difficulty == 'difficult') return "danger"
         },
         updateQuizItem(id) {
-            console.log(id);
             let rdata = {
                 id: id,
                 user: this.user
@@ -78,19 +102,16 @@ export default {
             this.$store.dispatch(UPDATEQUIZITEM, rdata);
         },
         quizEnter(id) {
-            console.log(id);
             this.$router.push('/test/'+ id);
         }
     },
-    // watch: {
-    //     '$route.params.id': function (id) {
-    //         console.log(id);
-    //         this.$store.dispatch(GETTRACKITEMS, id);
-    //     },
-    // },
+    watch: {
+        '$route.params.id': function (id) {
+            this.$store.dispatch(GETTRACKITEMS, id);
+        },
+    },
     created() {
         this.subjectId = this.$router.currentRoute.params.id;
-        console.log(this.subjectId);
         let rdata = {
             id: this.subjectId,
             user: this.user
@@ -125,6 +146,7 @@ export default {
     }
     .quizInformation {
         width: 70%;
+        display: block;
     }
     .testResultField {
         display: block;

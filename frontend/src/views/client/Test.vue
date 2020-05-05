@@ -208,7 +208,6 @@ export default {
                     Values[currentIndex] = Values[randomIndex];
                     Values[randomIndex] = temporaryValue;
             }
-            console.log('________Values__________', Values);
             this.matchingValues = Values;
         }
     },
@@ -236,10 +235,8 @@ export default {
         if (rightCounter-wrongCounter > 0) {
             if(this.currentQuestion.quizType == 'multiple' || this.currentQuestion.quizType == 'truefalse') {
                 getMark = (rightCounter-wrongCounter) * this.currentQuestion.mark/rightAnswer;
-                console.log('getMark', getMark);
             } else if(this.currentQuestion.quizType == 'matching') {
                 getMark = (rightCounter-wrongCounter) * this.currentQuestion.mark/this.currentQuestion.answers.length;
-                console.log('getMark', getMark);
             }
         } else {
             getMark = 0;

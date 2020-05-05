@@ -106,9 +106,8 @@ export default {
       });
       return AdminService.multipleCategoryDelete(list).then(
         res => {
-          this.$vs.notify({ title:'Deleted Successfully', color:'success', position:'top-right' });
+          this.$vs.notify({ title: res.data.message, color:'success', position:'top-right' });
           setTimeout(function(){ window.location.reload() }, 500);
-          console.log(res)
         }
       )
     },

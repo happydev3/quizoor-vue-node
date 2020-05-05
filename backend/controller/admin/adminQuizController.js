@@ -254,7 +254,6 @@ exports.editQuiz = async (req, res) => {
     console.log(req.body);
     const id = req.body.quizID;
     let quiz = await Quiz.findOne({_id: id});
-    console.log('>>>>>>>>>>>>>>>', quiz);
     quiz.name = req.body.name;
     quiz.difficulty = req.body.difficulty;
     quiz.user = req.body.user;

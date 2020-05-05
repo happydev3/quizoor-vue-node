@@ -12,10 +12,6 @@
               <form id="formSignup" name="form" @submit.prevent="handleRegister">
                 <div class="row">
                   <div class="col">
-                    <div class="top-social">
-                      <a class="google-ico" href="/auth/http://">Sign Up with Google</a>
-                      <a class="facebook-ico" href="/auth/http://">Sign Up with Facebook</a>
-                    </div>
                     <div class="flex">
                       <div>
                         <label for="fname">First Name</label>

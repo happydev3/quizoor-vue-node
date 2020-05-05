@@ -13,7 +13,6 @@ class AdminService {
         return res;
       },
       error => {
-        console.log(error);
         return error;
       }
     )
@@ -26,7 +25,6 @@ class AdminService {
     }, { headers: authHeader() })
     .then(
       res => {
-        console.log(res);
         return res;
       },
       error => {
@@ -522,7 +520,7 @@ class AdminService {
         return res;
       },
       error => {
-        console.log(error)
+        return error;
       }
     )
   }
@@ -640,7 +638,7 @@ class AdminService {
         return res;
       },
       error => {
-        console.log(error)
+        return error;
       }
     )
   }

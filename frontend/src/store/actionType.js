@@ -21,7 +21,7 @@ export const CHANGESTATUS = "changestatus"
 export const LEVELSELECT = "levelselect"
 export const CATEGORYSELECT = 'categoryselect'
 export const SUBJECTSELECT = 'subjectselect'
-
+export const SEARCHSUBJECT = 'searchsubject'
 
 ///level
 export const ADDLEVEL = "addlevel"

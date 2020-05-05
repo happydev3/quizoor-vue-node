@@ -82,5 +82,6 @@ router.post('/updateQuizItem', auth, homeController.updateQuizItem);
 router.get('/getTestItem/:id', auth, homeController.getTestItem);
 router.post('/saveTestResult', auth, homeController.saveTestResult);
 router.get('/getAllSubjectItems/:id', auth, homeController.getAllSubjectItems);
+router.post('/searchSubject', auth, homeController.searchSubject);
 
 module.exports = router;

@@ -31,3 +31,4 @@ export const GETTRACKITEMSSUCCESS = "gettrackitemsuccess"
 export const UPDATEQUIZITEMSUCCESS = "updatequizitemsuccess"
 export const GETESTITEMSUCCESS = "getestitemsuccess"
 export const GETALLSUBJECTSUCCESS = "getallsubjectsuccess"
+export const SEARCHSUBJECTSUCCESS = 'searchsubjectsuccess'

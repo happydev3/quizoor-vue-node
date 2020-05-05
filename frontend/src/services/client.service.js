@@ -112,5 +112,19 @@ class ClientService {
       }
     )
   }
+
+  searchSubject(rdata) {
+    return axios.post(API_URL + 'searchSubject', {
+      search: rdata.searchSubject,
+      locale: rdata.locale
+    }, { headers: authHeader() }).then(
+      res => {
+        return res;
+      },
+      error => {
+        return error;
+      }
+    )
+  }
 }
 export default new ClientService();

@@ -1,5 +1,5 @@
 <template>
-    <div class="carousel-example">
+    <div class="carousel-example" :style="{padding: '10px'}">
         <swiper :options="swiperOption">
             <swiper-slide v-for="(subjectItem, index) in subjectItems" :key="index">
                 <div>
@@ -21,7 +21,7 @@ export default {
         return {
             swiperOption: {
                 slidesPerView: 4,
-                slidesPerColumn: 2,
+                slidesPerColumn: 3,
                 spaceBetween: 30,
                 pagination: {
                     el: '.swiper-pagination',
@@ -46,7 +46,7 @@ export default {
     },
     computed : {
         ...mapState({
-            subjectItems: state => state.client.localeSubjectItems
+            subjectItems: state => state.client.subjectItems
         })
     },
     watch: {

@@ -6,7 +6,7 @@
           <router-link :to="'/'" ><img class="titleImg" :src="titleImg" /></router-link>
       </vs-col>
       <vs-col vs-type="flex"  vs-align="center"  vs-lg="4" vs-sm="12" vs-xs="12">
-        <vs-input icon="search" class="subject-search" placeholder="Search for Subjects..." v-model="search" />
+        <vs-input icon="search" class="subject-search" placeholder="Search for Subjects..." v-model="search" @change="searchSubject()"/>
       </vs-col>
       <vs-col vs-type="flex"  vs-align="center" vs-lg="2" vs-sm="12" vs-xs="12">
         <vs-dropdown vs-custom-content vs-trigger-click class="cursor-pointer" :style="{marginLeft: '20px'}">
@@ -103,7 +103,7 @@ import ClientService from '@/services/client.service.js';
 import { mapState } from 'vuex';
 import titleImg from "@/assets/images/logo/quiz.png";
 import FrontFooter from './FrontFooter.vue';
-import { LOGOUT, GETSUBJECTITEMS, GETLEVLEITEMS } from '../../store/actionType';
+import { LOGOUT, GETSUBJECTITEMS, GETLEVLEITEMS, SEARCHSUBJECT } from '../../store/actionType';
 import '@/assets/css/frontend.css';
 export default {
   data() {
@@ -204,6 +204,13 @@ export default {
       this.categoryMenuCheck = false;
       this.subjectMenuCheck = false;
       this.$router.push('/track/' + id);
+    },
+    searchSubject() {
+      let rdata = {
+        searchSubject: this.search,
+        locale: this.$i18n.locale
+      }
+      this.$store.dispatch(SEARCHSUBJECT, rdata);
     }
   },
   created() {

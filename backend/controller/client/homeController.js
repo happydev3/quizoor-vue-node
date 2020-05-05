@@ -63,16 +63,56 @@ exports.getSearchTrakItems = async (req, res) => {
         const subjectInformation = await Subject.findOne({_id:subjectId}).populate('level').populate('category');
         const chapterItems = await Chapter.find({subject:subjectId}).populate('level').populate('category').populate('subject');
         if(chapterItems.length > 0) {
-            const quizItems = await Quiz.find({chapter:chapterItems[0]._id, verification: 'checked', status: 'activated'}).populate('chapter');
-            if(quizItems.length > 0) {
+            const tquizItems = await Quiz.find({chapter:chapterItems[0]._id, verification: 'checked', status: 'activated'}).populate('chapter').populate('user');
+            if(tquizItems.length > 0) {
+                let tempItems = [];
+                for (let i = 0 ; i < tquizItems.length ; i++) {
+                    let checkPassed = 0;
+                    let guessResult = '';
+                    let totalMark = '';
+                    for (let j = 0 ; j < quizHistories.length ; j++) {
+                        if(JSON.stringify(tquizItems[i]._id) == JSON.stringify(quizHistories[j].quiz)) {
+                            checkPassed++;
+                            guessResult = quizHistories[j].guessResult;
+                            totalMark = quizHistories[j].totalMark;
+                        }
+                    }
+                    if(checkPassed>0) {
+                        tempItems.push({
+                            _id: tquizItems[i]._id,
+                            name: tquizItems[i].name,
+                            difficulty: tquizItems[i].difficulty,
+                            author: tquizItems[i].user.firstname + ' ' + tquizItems[i].user.lastname,
+                            completed: true,
+                            questionNumbers: tquizItems[i].questions.length,
+                            guessResult: guessResult,
+                            totalMark: totalMark,
+                            chapterName: tquizItems[i].chapter.name,
+                            chapterContent: tquizItems[i].chapter.content
+                        });
+                    } else if (checkPassed == 0) {
+                        tempItems.push({
+                            _id: tquizItems[i]._id,
+                            name: tquizItems[i].name,
+                            difficulty: tquizItems[i].difficulty,
+                            author: tquizItems[i].user.firstname + ' ' + tquizItems[i].user.lastname,
+                            completed: false,
+                            questionNumbers: tquizItems[i].questions.length,
+                            guessResult: 0,
+                            totalMark: 0,
+                            chapterName: tquizItems[i].chapter.name,
+                            chapterContent: tquizItems[i].chapter.content
+                        });
+                    }
+                }
+                let quizItems = tempItems;
                 let resData = {
                     subjectInformation: subjectInformation,
                     chapterItems: chapterItems,
                     quizItems: quizItems,
-                    quizHistories: quizHistories
                 }
                 return res.status(200).json(resData);
-            } else if(quizItems == 0) {
+            } else if(tquizItems.length == 0) {
                 let resData = {
                     subjectInformation: subjectInformation,
                     chapterItems: chapterItems,
@@ -97,13 +137,53 @@ exports.updateQuizItem = async(req, res) => {
     try {   
         const user = req.body.user;
         const chapterId = req.body.id;
-        const chapterItems = await Chapter.findOne({_id:chapterId});
-        const quizItems = await Quiz.find({chapter: chapterId, verification: 'checked', status: 'activated'}).populate('chapter');
         const quizHistories = await QuizResult.find({user: user});
+        const chapterItems = await Chapter.findOne({_id:chapterId});
+        const tquizItems = await Quiz.find({chapter: chapterId, verification: 'checked', status: 'activated'}).populate('chapter').populate('user');
+        let tempItems = [];
+        for (let i = 0 ; i < tquizItems.length ; i++) {
+            let checkPassed = 0;
+            let guessResult = '';
+            let totalMark = '';
+            for (let j = 0 ; j < quizHistories.length ; j++) {
+                if(JSON.stringify(tquizItems[i]._id) == JSON.stringify(quizHistories[j].quiz)) {
+                    checkPassed++;
+                    guessResult = quizHistories[j].guessResult;
+                    totalMark = quizHistories[j].totalMark;
+                }
+            }
+            if(checkPassed>0) {
+                tempItems.push({
+                    _id: tquizItems[i]._id,
+                    name: tquizItems[i].name,
+                    difficulty: tquizItems[i].difficulty,
+                    author: tquizItems[i].user.firstname + ' ' + tquizItems[i].user.lastname,
+                    completed: true,
+                    questionNumbers: tquizItems[i].questions.length,
+                    guessResult: guessResult,
+                    totalMark: totalMark,
+                    chapterName: tquizItems[i].chapter.name,
+                    chapterContent: tquizItems[i].chapter.content
+                });
+            } else if (checkPassed == 0) {
+                tempItems.push({
+                    _id: tquizItems[i]._id,
+                    name: tquizItems[i].name,
+                    difficulty: tquizItems[i].difficulty,
+                    author: tquizItems[i].user.firstname + ' ' + tquizItems[i].user.lastname,
+                    completed: false,
+                    questionNumbers: tquizItems[i].questions.length,
+                    guessResult: 0,
+                    totalMark: 0,
+                    chapterName: tquizItems[i].chapter.name,
+                    chapterContent: tquizItems[i].chapter.content
+                });
+            }
+        }
+        let quizItems = tempItems;
         let resData = {
             chapterItems: chapterItems,
             quizItems: quizItems,
-            quizHistories: quizHistories
         }
         return res.status(200).json(resData);
     } catch(error) {
@@ -126,26 +206,36 @@ exports.saveTestResult = async(req, res) => {
     let quiz = req.body.quizID;
     let totalMark = req.body.totalMark;
     let guessResult = req.body.guessResult;
-    console.log(user, quiz, totalMark, guessResult);
-    let updateQuiz = await Quiz.findOne({_id: quiz});
-    console.log(updateQuiz);
-    updateQuiz.clients.push(user);
-    updateQuiz.save();
-    let quizResult = new QuizResult({
-        user: user,
-        quiz: quiz,
-        totalMark: totalMark,
-        guessResult: guessResult
-    });
-    quizResult.save().then(
-        quizResult  => {
-            return res.status(200).json({message: 'Result saved Successfully'});
-        }
-    ).catch (
-        error => {
-            return res.status(400).json({message: error});
-        }
-    );
+    let checkTestResult = await QuizResult.findOne({quiz: quiz, user: user});
+    if(checkTestResult) {
+        checkTestResult.totalMark = totalMark;
+        checkTestResult.guessResult = guessResult;
+        checkTestResult.save().then(
+            quizResult  => {
+                return res.status(200).json({message: 'Result saved Successfully'});
+            }
+        ).catch (
+            error => {
+                return res.status(400).json({message: error});
+            }
+        );
+    } else {
+        let quizResult = new QuizResult({
+            user: user,
+            quiz: quiz,
+            totalMark: totalMark,
+            guessResult: guessResult
+        });
+        quizResult.save().then(
+            quizResult  => {
+                return res.status(200).json({message: 'Result saved Successfully'});
+            }
+        ).catch (
+            error => {
+                return res.status(400).json({message: error});
+            }
+        );
+    }
 }
 
 exports.getAllSubjectItems = async (req, res) => {
@@ -169,4 +259,21 @@ exports.getAllSubjectItems = async (req, res) => {
     )
     console.log(levels);
 
+}
+
+exports.searchSubject = async (req, res) => {
+    let search = req.body.search;
+    let locale = req.body.locale;
+    let levels = await Level.find({location: locale});
+    let templevelIds = [];
+    levels.map(function(level) {
+        templevelIds.push(level._id);
+    })
+    let LevelIds = templevelIds;
+    let subjects = await Subject.find({name: {$regex: search, $options: 'i'}, level: {$in: LevelIds}});
+    if(subjects) {
+        return res.status(200).json(subjects);
+    } else {
+        return res.status(201).json({message: 'Item does not exist'});
+    }
 }

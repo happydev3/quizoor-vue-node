@@ -251,7 +251,6 @@ export default {
         this.subject = res.data.subject._id;
         this.chapter = res.data.chapter._id;
         this.difficulty = res.data.difficulty;
-        // this.questions = res.data.questions;
         let tempQuiz = [];
         let questions = [];
         res.data.questions.map(function(question) {
@@ -352,7 +351,6 @@ export default {
                 difficulty: this.difficulty,
                 questions: this.questions,
               } 
-              console.log('______quiz edit data_____', rdata);
               return AdminService.editQuiz(rdata).then(
                 res => {
                   if(res.data.message == 'successfully updated') {
@@ -373,7 +371,6 @@ export default {
                 difficulty: this.difficulty,
                 questions: this.questions,
               }
-              console.log('______quiz add data_____', rdata);
               return AdminService.addQuiz(rdata).then(
                 res => {
                   if(res.data.message == 'Quiz added successfully') {

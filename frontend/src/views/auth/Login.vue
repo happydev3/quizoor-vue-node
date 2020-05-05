@@ -8,16 +8,11 @@
 
       <div id="signin" class="tabcontent" style="display: block;">
         <div class="row">
-          <div class="col-100">
+          <div class="col-100" :style="{width: '100%'}">
             <div class="box-container">
               <form name="form" @submit.prevent="handleLogin">
                 <div class="row">
-                  <div class="col">
-                    <div class="top-social">
-                      <a class="google-ico" href="/">Sign Up with Google</a>
-                      <a class="facebook-ico" href="/">Sign Up with Facebook</a>
-                    </div>
-
+                  <div class="col" :style="{width: '100%'}">
                     <label for="email">Email</label>
                     <input
                       v-model= "email"

@@ -162,7 +162,7 @@ const actions = {
         return res;
       },
       error => {
-        console.log(error);
+        return error;
       }
     )
   },
