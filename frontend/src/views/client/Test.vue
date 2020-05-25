@@ -249,15 +249,15 @@ export default {
                     this.$vs.notify({ time:9000, title:'Congratulation! You are correct!', text: 'You selected all right answers and get' + ' ' +  getMark + ' ' + 'mark', color:'success', position:'top-center' })
                 } else if (wrongCounter > 0) {
                     this.isWrong = true;
-                    this.$vs.notify({ time:9000, title:'You are wrong!', text: 'You selected all right answers but you selected wrong answers of ' + wrongCounter + ' and get' + ' ' +  getMark  + ' ' + 'mark', color:'warning', position:'top-center' })
+                    this.$vs.notify({ time:9000, title:'Oops...', text: 'You selected all right answers but you selected wrong answers of ' + wrongCounter + ' and get' + ' ' +  getMark  + ' ' + 'mark', color:'warning', position:'top-center' })
                 }
             } else {
                 if (rightCounter > 0 && wrongCounter > 0) {
                     this.isWrong = true;
-                    this.$vs.notify({time:9000,  title:'You are wrong!', text: 'You selected right answers' +  ' ' + rightCounter + 'of' + ' ' + rightAnswer + ', wrong answers of' + ' ' + wrongCounter  + 'and get' + ' ' +  getMark + ' ' + 'mark', color:'warning', position:'top-center' })
+                    this.$vs.notify({time:9000,  title:'Oops...', text: 'You selected right answers' +  ' ' + rightCounter + 'of' + ' ' + rightAnswer + ', wrong answers of' + ' ' + wrongCounter  + 'and get' + ' ' +  getMark + ' ' + 'mark', color:'warning', position:'top-center' })
                 } else {
                     this.isWrong = true;
-                    this.$vs.notify({time:9000,  title:'You are wrong!', text: 'You guessed nothing and get 0 mark', color:'danger', position:'top-center' })
+                    this.$vs.notify({time:9000,  title:'Oops...', text: 'You guessed nothing and get 0 mark', color:'danger', position:'top-center' })
                 }
             }
         } else {
@@ -267,10 +267,10 @@ export default {
             } else {
                 if (rightCounter > 0 && wrongCounter > 0) {
                     this.isWrong = true;
-                    this.$vs.notify({time:9000,  title:'You are wrong!', text: 'You selected right answers ' + rightCounter + ' of '  + this.currentQuestion.answers.length + ', wrong answers of ' + wrongCounter  + ' and get ' +  getMark + ' mark', color:'warning', position:'top-center' })
+                    this.$vs.notify({time:9000,  title:'Oops...', text: 'You selected right answers ' + rightCounter + ' of '  + this.currentQuestion.answers.length + ', wrong answers of ' + wrongCounter  + ' and get ' +  getMark + ' mark', color:'warning', position:'top-center' })
                 } else {
                     this.isWrong = true;
-                    this.$vs.notify({time:9000,  title:'You are wrong!', text: 'You guessed nothing and get 0 mark', color:'danger', position:'top-center' })
+                    this.$vs.notify({time:9000,  title:'Oops...', text: 'You guessed nothing and get 0 mark', color:'danger', position:'top-center' })
                 }
             }
         }

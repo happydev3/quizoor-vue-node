@@ -4,7 +4,7 @@
             <swiper-slide v-for="(subjectItem, index) in subjectItems" :key="index">
                 <div>
                 <h4 class="subjectItem-header">{{subjectItem.name}}</h4>
-                <vs-button class="subjectItemButton" color="primary" type="filled"><router-link :to="'/track/' + subjectItem._id" :style="{color: 'white'}">Start</router-link></vs-button>
+                <vs-button class="subjectItemButton" color="primary" type="filled" @click="moveSubjectItems(subjectItem._id)">Start</vs-button>
                 </div>
             </swiper-slide>
             <div class="swiper-pagination" slot="pagination"></div>
@@ -46,6 +46,7 @@ export default {
     },
     computed : {
         ...mapState({
+            loggedIn: state => state.auth.initialState.status.loggedIn,
             subjectItems: state => state.client.subjectItems
         })
     },
@@ -54,6 +55,15 @@ export default {
             let locale = val;
             this.$store.dispatch(GETALLSUBJECT, locale);
         },
+    },
+    methods: {
+        moveSubjectItems(id) {
+            if(this.loggedIn == false) {
+                this.$router.push('/login');
+            } else {
+                this.$router.push('/track/' + id);
+            }
+        }
     },
     created() {
         let locale = this.$i18n.locale;

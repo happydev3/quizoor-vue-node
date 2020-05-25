@@ -8,8 +8,19 @@
       <vs-col vs-type="flex"  vs-align="center"  vs-lg="4" vs-sm="12" vs-xs="12">
         <vs-input icon="search" class="subject-search" placeholder="Search for Subjects..." v-model="search" @change="searchSubject()"/>
       </vs-col>
-      <vs-col vs-type="flex"  vs-align="center" vs-lg="2" vs-sm="12" vs-xs="12">
+      <vs-col vs-type="flex"  vs-align="center" vs-lg="2" vs-sm="12" vs-xs="12" v-if="windowWidth>810">
         <vs-dropdown vs-custom-content vs-trigger-click class="cursor-pointer" :style="{marginLeft: '20px'}">
+          <span class="cursor-pointer flex i18n-locale"><img class="h-4 w-5" :src="require(`@/assets/images/flags/${$i18n.locale}.png`)" :alt="$i18n.locale" /><span class="hidden sm:block ml-2 language-select">{{ getCurrentLocaleData.lang }}</span></span>
+          <vs-dropdown-menu class="w-48 i18n-dropdown vx-navbar-dropdown">
+            <vs-dropdown-item @click="updateLocale('en')"><img class="h-4 w-5 mr-1" src="@/assets/images/flags/en.png" alt="en" /> &nbsp;English</vs-dropdown-item>
+            <vs-dropdown-item @click="updateLocale('fr')"><img class="h-4 w-5 mr-1" src="@/assets/images/flags/fr.png" alt="fr" /> &nbsp;French</vs-dropdown-item>
+            <vs-dropdown-item @click="updateLocale('de')"><img class="h-4 w-5 mr-1" src="@/assets/images/flags/de.png" alt="de" /> &nbsp;German</vs-dropdown-item>
+            <vs-dropdown-item @click="updateLocale('pt')"><img class="h-4 w-5 mr-1" src="@/assets/images/flags/pt.png" alt="pt" /> &nbsp;Portuguese</vs-dropdown-item>
+          </vs-dropdown-menu>
+        </vs-dropdown>
+      </vs-col>
+      <vs-col vs-type="flex"  vs-align="center" vs-offset="10" vs-sm="2" vs-xs="2" v-if="windowWidth<=810">
+        <vs-dropdown vs-custom-content vs-trigger-click class="cursor-pointer" :style="{marginTop: '10px'}">
           <span class="cursor-pointer flex i18n-locale"><img class="h-4 w-5" :src="require(`@/assets/images/flags/${$i18n.locale}.png`)" :alt="$i18n.locale" /><span class="hidden sm:block ml-2 language-select">{{ getCurrentLocaleData.lang }}</span></span>
           <vs-dropdown-menu class="w-48 i18n-dropdown vx-navbar-dropdown">
             <vs-dropdown-item @click="updateLocale('en')"><img class="h-4 w-5 mr-1" src="@/assets/images/flags/en.png" alt="en" /> &nbsp;English</vs-dropdown-item>
@@ -21,7 +32,7 @@
       </vs-col>
     </vs-row>
   </div>
-    <vs-navbar v-model="activeItem" class="nabarx nav-front" :color="colorx">
+    <vs-navbar v-model="activeItem" class="nabarx nav-front" :color="colorx" v-if="windowWidth>810">
       <vs-navbar-item class="subject-header" index="0" vs-w="2">
           <vs-button color="darkorchid" icon-pack="feather" icon="icon-menu" icon-after @click="toggleLevelMenu">{{ $t('Subjects') }}</vs-button>
           <div id="toggleLevelMenu" :style="{display: 'none'}">
@@ -93,6 +104,126 @@
         </div>
       </vs-navbar-item>
     </vs-navbar>
+    <vs-navbar v-model="activeItem" class="nabarx nav-front" :color="colorx" v-if="windowWidth<=810">
+       <vs-navbar-item class="login-header" index="1" vs-w="12">
+        <vs-button color="dark" type="flat" size="medium" v-if="this.loggedIn == false" @click="$router.push('/login')" :style="{fontSize: '1rem'}" :disabled="path == '/login'">Login</vs-button>
+      </vs-navbar-item>
+      <vs-navbar-item class="register-header" index="2" vs-w="12">
+        <vs-button type="gradient" size="medium" v-if="this.loggedIn == false" @click="$router.push('/register')" :style="{fontSize: '1rem', marginTop: '10px'}" :disabled="path == '/register'">Register</vs-button>
+        <div class="the-navbar__user-meta flex items-center" :style="{textAlign: 'center', marginLeft: '30%'}" v-if="this.loggedIn == true">
+          <div class="text-right leading-tight hidden sm:block">
+            <p class="font-semibold">{{ this.username }}</p>
+          </div>
+          <vs-dropdown vs-custom-content vs-trigger-click class="cursor-pointer">
+            <div class="con-img ml-3"><img src="@/assets/images/portrait/small/avatar-s-11.png" alt="" width="40" height="40" class="rounded-full shadow-md cursor-pointer block" /></div>
+            <vs-dropdown-menu class="vx-navbar-dropdown">
+              <ul style="min-width: 9rem" v-if="this.loggedIn">
+                <li class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white" @click="$router.push('/profile')"><feather-icon icon="UserIcon" svgClasses="w-4 h-4"></feather-icon> <span class="ml-2">{{$t('Profile')}}</span></li>
+                <li class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white" v-if="this.loggedIn && this.$store.getters.permission == 'superadmin' || this.$store.getters.permission == 'admin'" @click="$router.push('/admin')"><feather-icon icon="MailIcon" svgClasses="w-4 h-4"></feather-icon> <span class="ml-2">{{$t('Dashboard')}}</span></li>
+                <li class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white" v-if="this.loggedIn && this.$store.getters.permission == 'author'" @click="$router.push('/author')"><feather-icon icon="MailIcon" svgClasses="w-4 h-4"></feather-icon> <span class="ml-2">{{$t('Dashboard')}}</span></li>
+                <vs-divider class="m-1"></vs-divider>
+                <li class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white" @click.prevent="logOut"><feather-icon icon="LogOutIcon" svgClasses="w-4 h-4"></feather-icon> <router-link :to="'/'" class="ml-2 logout" >Logout</router-link></li>
+              </ul>
+            </vs-dropdown-menu>
+          </vs-dropdown>
+        </div>
+      </vs-navbar-item>
+      <vs-navbar-item class="subject-header" index="0" vs-w="2" v-if="windowWidth>810">
+          <vs-button color="darkorchid" icon-pack="feather" icon="icon-menu" icon-after @click="toggleLevelMenu">{{ $t('Subjects') }}</vs-button>
+          <div id="toggleLevelMenu" :style="{display: 'none'}">
+            <div class="grid-layout-container alignment-block">
+              <vs-row vs-align="center" vs-type="flex" vs-justify="center" vs-w="12">
+                <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="10">
+                  <vs-collapse accordion>
+                    <h4 class="searchItemHeader">Level</h4>
+                    <li class="searchItemField" :key="index" v-for="(level,index) in searchItemLevels" @click="categoryMenuOpen(level._id)">
+                      {{level.name}}
+                    </li>
+                  </vs-collapse>
+                </vs-col>
+              </vs-row>
+            </div>
+          </div>
+          <div id="toggleCategoryMenu" v-if="isLevelMenu && isCategoryMenu && categoryMenuCheck">
+            <div class="grid-layout-container alignment-block">
+              <vs-row vs-align="center" vs-type="flex" vs-justify="center" vs-w="12">
+                <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="10">
+                  <vs-collapse accordion>
+                    <h4 class="searchItemHeader">Category</h4>
+                    <li class="searchItemField" :key="index" v-for="(category,index) in searchItemCategories" @click="subjectMenuOpen(category._id)">
+                      {{category.name}}
+                    </li>
+                  </vs-collapse>
+                </vs-col>
+              </vs-row>
+            </div>
+          </div>
+          <div id="toggleSubjectMenu" v-if="isLevelMenu && isCategoryMenu && isSubjectMenu && subjectMenuCheck">
+            <div class="grid-layout-container alignment-block">
+              <vs-row vs-align="center" vs-type="flex" vs-justify="center" vs-w="12">
+                <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="10">
+                  <vs-collapse accordion>
+                    <h4 class="searchItemHeader">subject</h4>
+                    <li class="searchItemField" :key="index" v-for="(subject,index) in searchItemSubjects" @click="moveTrack(subject._id)">
+                      <!-- <router-link :to="'/track/' + subject._id" :style="{fontSize: '1rem', padding: '3px'}"> -->
+                      {{subject.name}}
+                      <!-- </router-link> -->
+                    </li>
+                  </vs-collapse>
+                </vs-col>
+              </vs-row>
+            </div>
+          </div>
+      </vs-navbar-item>
+      <vs-navbar-item class="subject-header" index="0" vs-w="2" :style="{marginTop: '10px'}" v-if="windowWidth<=810">
+          <vs-button color="darkorchid" icon-pack="feather" icon="icon-menu" icon-after @click="toggleLevelMenu">{{ $t('Subjects') }}</vs-button>
+          <div id="toggleLevelMenu" :style="{display: 'none'}">
+            <div class="grid-layout-container alignment-block">
+              <vs-row vs-align="left" vs-type="flex" vs-justify="left" vs-w="12">
+                <vs-col vs-type="flex" vs-justify="left" vs-align="left" vs-w="12">
+                  <vs-collapse accordion>
+                    <h4 class="searchItemHeader">Level</h4>
+                    <li class="searchItemField" :key="index" v-for="(level,index) in searchItemLevels" @click="categoryMenuOpen(level._id)">
+                      {{level.name}}
+                    </li>
+                  </vs-collapse>
+                </vs-col>
+              </vs-row>
+            </div>
+          </div>
+          <div id="toggleCategoryMenu" v-if="isLevelMenu && isCategoryMenu && categoryMenuCheck">
+            <div class="grid-layout-container alignment-block">
+              <vs-row vs-align="left" vs-type="flex" vs-justify="left" vs-w="12">
+                <vs-col vs-type="flex" vs-justify="left" vs-align="left" vs-w="12">
+                  <vs-collapse accordion>
+                    <h4 class="searchItemHeader">Category</h4>
+                    <li class="searchItemField" :key="index" v-for="(category,index) in searchItemCategories" @click="subjectMenuOpen(category._id)">
+                      {{category.name}}
+                    </li>
+                  </vs-collapse>
+                </vs-col>
+              </vs-row>
+            </div>
+          </div>
+          <div id="toggleSubjectMenu" v-if="isLevelMenu && isCategoryMenu && isSubjectMenu && subjectMenuCheck">
+            <div class="grid-layout-container alignment-block">
+               <vs-row vs-align="left" vs-type="flex" vs-justify="left" vs-w="12">
+                <vs-col vs-type="flex" vs-justify="left" vs-align="left" vs-w="12">
+                  <vs-collapse accordion>
+                    <h4 class="searchItemHeader">subject</h4>
+                    <li class="searchItemField" :key="index" v-for="(subject,index) in searchItemSubjects" @click="moveTrack(subject._id)">
+                      <!-- <router-link :to="'/track/' + subject._id" :style="{fontSize: '1rem', padding: '3px'}"> -->
+                      {{subject.name}}
+                      <!-- </router-link> -->
+                    </li>
+                  </vs-collapse>
+                </vs-col>
+              </vs-row>
+            </div>
+          </div>
+      </vs-navbar-item>
+     
+    </vs-navbar>
   <router-view></router-view>
   <FrontFooter></FrontFooter>
 </div>
@@ -122,6 +253,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      windowWidth: state => state.layout.windowWidth
+    }),
     loggedIn() {
       return this.$store.state.auth.initialState.status.loggedIn;
     },
@@ -156,6 +290,7 @@ export default {
       } return false;
     },
     ...mapState({
+      loggedIn: state => state.auth.initialState.status.loggedIn,
       searchItemLevels: state => state.client.levelItems
     })
   },
@@ -203,15 +338,28 @@ export default {
       this.isLevelMenu == false;
       this.categoryMenuCheck = false;
       this.subjectMenuCheck = false;
-      this.$router.push('/track/' + id);
+      if(this.loggedIn == false) {
+        this.$router.push('/login');
+      } else {
+       this.$router.push('/track/' + id);
+      }
     },
     searchSubject() {
-      let rdata = {
-        searchSubject: this.search,
-        locale: this.$i18n.locale
+      if(this.loggedIn == false) {
+        this.$router.push('/login');
+      } else {
+          let rdata = {
+            searchSubject: this.search,
+            locale: this.$i18n.locale
+          }
+          this.$store.dispatch(SEARCHSUBJECT, rdata).then(
+            res => {
+              console.log(res);
+              this.$router.push('/choose-subject');
+            }
+          );
+        }
       }
-      this.$store.dispatch(SEARCHSUBJECT, rdata);
-    }
   },
   created() {
     this.$store.dispatch(GETSUBJECTITEMS, this.$i18n.locale);
@@ -254,12 +402,71 @@ export default {
     width: 350px;
     margin-left: 700px;
     padding: 10px 0;
-    text-align: center;
+    text-align: left !important;
     background-color: darkorchid;
     margin-top: 5px;
     -webkit-transition: ease-in 0.7s all !important;
     transition: ease-in 0.7s all !important;
     /* animation: animateleft 0.7s !important; */
+  }
+
+  @media(max-width: 800px) {
+    #toggleLevelMenu {
+    z-index: 999;
+    position: absolute;
+    width: 150px;
+    padding: 1px 0;
+    text-align: left !important;
+    background-color: darkorchid;
+    margin-left: -10px;
+    margin-top: 5px;
+    -webkit-transition: ease-in 0.7s all !important;
+    transition: ease-in 0.7s all !important;
+    font-size: 15px;
+    /* animation: animateleft 0.7s !important; */
+  }
+  #toggleCategoryMenu {
+    z-index: 999;
+    position: absolute;
+    width: 115px;
+    margin-left: 115px;
+    padding: 1px 0;
+    text-align: left !important;
+    background-color: darkorchid;
+    margin-top: 5px;
+    -webkit-transition: ease-in 0.7s all !important;
+    transition: ease-in 0.7s all !important;
+    font-size: 15px;
+    /* animation: animateleft 0.7s !important; */
+  }
+  #toggleSubjectMenu {
+    z-index: 999;
+    position: absolute;
+    width: 120px;
+    margin-left: 220px;
+    padding: 1px 0;
+    text-align: center;
+    background-color: darkorchid;
+    margin-top: 5px;
+    -webkit-transition: ease-in 0.7s all !important;
+    transition: ease-in 0.7s all !important;
+    font-size: 15px;
+    /* animation: animateleft 0.7s !important; */
+  }
+    #toggleLevelMenu .vs-col {
+      padding: 0 5px !important;
+    }
+    #toggleCategoryMenu .vs-col {
+      padding: 0 5px !important;
+    }
+    #toggleSubjectMenu .vs-col {
+      padding: 0 5px !important;
+    }
+    #toggleLevelMenu .vs-col .vs-collapse,
+    #toggleCategoryMenu .vs-col .vs-collapse,
+    #toggleSubjectMenu .vs-col .vs-collapse {
+      padding: 5px !important
+    }
   }
   .searchItemField {
     margin-top: 5px;

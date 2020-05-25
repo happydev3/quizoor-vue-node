@@ -118,7 +118,7 @@ export default {
             res => {
               this.successful = true;
               if(res && res.token) {
-                this.$vs.notify({ title:'Login successfully', text: 'Welcome to Quizoor', color:'success', position:'top-right' });
+                this.$vs.notify({ title:'Login successfully', text: 'WELCOME TO ALLQUIZZ', color:'success', position:'top-right' });
                 if(this.$store.getters.permission == "superadmin" || this.$store.getters.permission == "admin") {
                   this.$store.commit(LOADING);
                     this.$router.push('/admin');

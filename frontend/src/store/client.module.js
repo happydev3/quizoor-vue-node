@@ -85,6 +85,7 @@ const actions = {
     return ClientService.searchSubject(rdata).then(
       res => {
         context.commit(SEARCHSUBJECTSUCCESS, res);
+        return res;
       }
     )
   }

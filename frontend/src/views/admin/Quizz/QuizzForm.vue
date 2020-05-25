@@ -142,7 +142,7 @@
           <vs-row vs-w="12">
             <vs-col  vs-w="1" vs-align="center" :style="{paddingTop: '20px'}"><h6>Reason:</h6></vs-col>
             <vs-col  vs-w="11" vs-type="flex" vs-justify="center" vs-align="center">
-                <quill-editor v-model="question.reason" name="answerContent" :style="{marginBottom: '20px'}"></quill-editor>
+                <quill-editor id="reason" ref="reason" :options="editorOption" v-model="question.reason" name="answerContent" :style="{marginBottom: '20px'}"></quill-editor>
             </vs-col>
           </vs-row>
           <div class="button-area">
@@ -205,9 +205,12 @@ export default {
         {value: 'matching', label: 'Matching'}
       ],
       answerHeader: [
-        'A', 'B', 'C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'
       ],
-      arrow: arrow
+      arrow: arrow,
+      editorOption: {
+        placeholder: 'CORRECT ANSWER:'
+      }
     }
   },
   computed: {
@@ -217,7 +220,13 @@ export default {
     }),
     routename() {
       return this.$router.currentRoute.name
+    },
+    editor() {
+        return this.$refs.reason
     }
+  },
+  mounted() {
+      console.log('this is current quill instance object', this.editor)
   },
   created() {
     this.addQuestion();

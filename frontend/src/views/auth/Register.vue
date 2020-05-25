@@ -164,7 +164,7 @@ export default {
             res => {
               this.successful = true;
               if(res.token) {
-                this.$vs.notify({ title:'Register successfully', text: 'Welcome to Quizoor', color:'success', position:'top-right' })
+                this.$vs.notify({ title:'Register successfully', text: 'WELCOME TO ALLQUIZZ', color:'success', position:'top-right' })
                 if(this.$store.getters.permission == "superadmin" || this.$store.getters.permission == "admin") {
                     this.$router.push('/admin');
                   } else if (this.$store.getters.permission == "author") {

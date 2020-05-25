@@ -10,7 +10,7 @@ const QuizResult = require('../../model/QuizResult');
 exports.getSearchValue = async (req, res) => {
     try {
         const location = req.params.id;
-        const levels = await Level.find({location: location});
+        const levels = await Level.find({location: location, status:'activated'});
         console.log(levels);
         return res.status(200).json(levels);
     }
@@ -21,7 +21,7 @@ exports.getSearchValue = async (req, res) => {
 exports.getSearchCategory = async (req,res) => {
     try {
         const levelID = req.params.id;
-        const categories = await Category.find({level:levelID});
+        const categories = await Category.find({level:levelID, status:'activated'});
         console.log(categories);
         return res.status(200).json(categories)
     } catch(error){
@@ -31,7 +31,7 @@ exports.getSearchCategory = async (req,res) => {
 exports.getSearchSubject = async (req, res) => {
     try {
         const categoryID = req.params.id;
-        const subjects = await Subject.find({category:categoryID});
+        const subjects = await Subject.find({category:categoryID, status:'activated'});
         console.log(subjects);
         return res.status(200).json(subjects);
     } catch(error) {
@@ -48,7 +48,7 @@ exports.getSubjects = async (req,res) => {
             tempLevelIds.push(level._id);
         });
         const levelIDs = tempLevelIds;
-        const subjectItems = await Subject.find({level:{$in:levelIDs}}).populate('level').populate('category');
+        const subjectItems = await Subject.find({level:{$in:levelIDs}, status:'activated'}).populate('level').populate('category');
         return res.status(200).json(subjectItems);
     } catch(error) {
 
@@ -60,8 +60,8 @@ exports.getSearchTrakItems = async (req, res) => {
         const user = req.body.user;
         const subjectId = req.body.id;
         const quizHistories = await QuizResult.find({user: user});
-        const subjectInformation = await Subject.findOne({_id:subjectId}).populate('level').populate('category');
-        const chapterItems = await Chapter.find({subject:subjectId}).populate('level').populate('category').populate('subject');
+        const subjectInformation = await Subject.findOne({_id:subjectId, status:'activated'}).populate('level').populate('category');
+        const chapterItems = await Chapter.find({subject:subjectId, status:'activated'}).populate('level').populate('category').populate('subject');
         if(chapterItems.length > 0) {
             const tquizItems = await Quiz.find({chapter:chapterItems[0]._id, verification: 'checked', status: 'activated'}).populate('chapter').populate('user');
             if(tquizItems.length > 0) {
@@ -194,7 +194,7 @@ exports.updateQuizItem = async(req, res) => {
 exports.getTestItem = async(req, res) => {
     try {
         const quizId = req.params.id;
-        const getTestItems = await Quiz.findOne({_id: quizId});
+        const getTestItems = await Quiz.findOne({_id: quizId, status:'activated'});
         return res.status(200).json(getTestItems);
     } catch(error) {
         return res.status(404).json(error);
@@ -249,7 +249,6 @@ exports.getAllSubjectItems = async (req, res) => {
     let levelIds = templevelIds;
     Subject.find({level: {$in: levelIds}}).then(
         subject => {
-            console.log('+++++++++______++++++++',subject);
             return res.status(200).json(subject);
         }
     ).catch(
